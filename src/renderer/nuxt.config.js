@@ -18,6 +18,7 @@ module.exports = {
 
   ],
   modules: [
+    '@nuxtjs/axios',
     '@nuxtjs/vuetify'
   ],
   vuetify: {
