@@ -14,15 +14,11 @@
       </v-list>
     </v-navigation-drawer>
 
-    <v-system-bar app window light :color="sysBarColor">
-      <v-spacer></v-spacer>
+    <v-system-bar app window light :color="systemBar.colour">
+      <v-spacer />
       <div>
-        <v-icon>mdi-power-plug</v-icon>
-        <span>Connected to the Daemon</span>
-      </div>
-      <div>
-        <v-icon>mdi-power-plug-off</v-icon>
-        <span>Not Connected to the daemon</span>
+        <v-icon>{{ systemBar.daemonConnIcon }}</v-icon>
+        <span>{{ systemBar.daemonConnText }}</span>
       </div>
     </v-system-bar>
 
@@ -68,8 +64,33 @@ export default {
       drawer: true
     };
   },
+  computed: {
+    systemBar() {
+      return this.daemonConnected
+        ? {
+            colour: "success",
+            daemonConnText: "Connected to the daemon",
+            daemonConnIcon: "mdi-power-plug"
+          }
+        : {
+            colour: "#FFEA00",
+            daemonConnText: "Not Connected to the daemon",
+            daemonConnIcon: "mdi-power-plug-off"
+          };
+    },
+    daemonConnected() {
+      return this.$store.state.daemonConnected;
+    }
+  },
   created() {
     this.$vuetify.theme.dark = true;
+  },
+  mounted() {
+    this.$store.dispatch("initDaemonConnection");
+    this.$store.dispatch("setSysInfo");
+  },
+  beforeDestroy() {
+    this.$store.dispatch("endDaemonConnection");
   }
 };
 </script>

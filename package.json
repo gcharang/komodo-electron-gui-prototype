@@ -1,7 +1,7 @@
 {
-  "name": "dexp2p-stream",
+  "name": "dexp2p-fileshare",
   "version": "0.0.1",
-  "description": "Stream and download streams using DEXP2P network of a Smart Chain",
+  "description": "Publish and download streams using DEXP2P network of a Smart Chain",
   "main": "./dist/main/index.js",
   "scripts": {
     "dev": "node .electron-nuxt/check-engines.js && cross-env-shell NODE_ENV=development node .electron-nuxt/index.js",
@@ -45,7 +45,7 @@
     "eslint": "5.16.0",
     "eslint-friendly-formatter": "4.0.1",
     "eslint-loader": "3.0.3",
-    "node-komodo-rpc": "^2.0.2",
+    "node-komodo-rpc": "^2.0.3",
     "nuxt": "2.11.0",
     "require-extension-hooks": "0.3.3",
     "require-extension-hooks-babel": "1.0.0",

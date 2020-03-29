@@ -6953,10 +6953,10 @@ node-fetch@^2.6.0:
   resolved "https://registry.yarnpkg.com/node-fetch/-/node-fetch-2.6.0.tgz#e633456386d4aa55863f676a7ab0daa8fdecb0fd"
   integrity sha512-8dG4H5ujfvFiqDmVu9fQ5bOHUC15JMjMY/Zumv26oOvvVJjM67KF8koCWIabKQ1GJIa9r2mMZscBq/TbdOcmNA==
 
-node-komodo-rpc@^2.0.2:
-  version "2.0.2"
-  resolved "https://registry.yarnpkg.com/node-komodo-rpc/-/node-komodo-rpc-2.0.2.tgz#599165ea834c0171eaf8f48c83e8003e236e9f7c"
-  integrity sha512-hIAFCL6Z0LC6thpSnC24rytI6CQRRAQ37cyc5w98AWcmaUE9y9pFhiH7NctOa1C4xV5dIqWn16d7OR4Sj6ZfDQ==
+node-komodo-rpc@^2.0.3:
+  version "2.0.3"
+  resolved "https://registry.yarnpkg.com/node-komodo-rpc/-/node-komodo-rpc-2.0.3.tgz#ee46ab8a26be4362ed7cf039f07a90034aacf6dc"
+  integrity sha512-aMaMpDfbm8qDmRrWw3v9jQuiZXPoBCWCQKNJS5JNIyCZJk6OYmNZA1gQvofvaJpdDE1EbvDDr3LpocgMcYgjuA==
   dependencies:
     axios "^0.18.0"
 
