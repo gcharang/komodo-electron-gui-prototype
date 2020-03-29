@@ -5,20 +5,12 @@
  */
 
 module.exports = {
-  mode: 'spa', // or 'universal'
+  mode: "spa", // or 'universal'
   head: {
-    title: 'dexp2p-fileshare'
+    title: "dexp2p-fileshare",
   },
   loading: false,
-  plugins: [
-    { ssr: true, src: '@/plugins/icons.js' }
-
-  ],
-  buildModules: [
-
-  ],
-  modules: [
-    '@nuxtjs/axios',
-    '@nuxtjs/vuetify'
-  ]
-}
+  plugins: [{ ssr: true, src: "@/plugins/icons.js" }],
+  buildModules: [],
+  modules: ["@nuxtjs/axios", "@nuxtjs/vuetify"],
+};

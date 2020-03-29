@@ -2,7 +2,12 @@
   <v-app id="inspire">
     <v-navigation-drawer v-model="drawer" app clipped expand-on-hover>
       <v-list>
-        <v-list-item v-for="item in navDrawerItems" :key="item.title" :to="item.nuxtLink" nuxt>
+        <v-list-item
+          v-for="item in navDrawerItems"
+          :key="item.title"
+          :to="item.nuxtLink"
+          nuxt
+        >
           <v-list-item-icon>
             <v-icon>{{ item.icon }}</v-icon>
           </v-list-item-icon>
@@ -44,53 +49,53 @@ export default {
   props: {
     // source: String
   },
-  data () {
+  data() {
     return {
-      sysBarColor: 'success', // #FFEA00 #FF5722
+      sysBarColor: "success", // #FFEA00 #FF5722
       navDrawerItems: [
-        { title: 'Dashboard', icon: 'mdi-view-dashboard', nuxtLink: '/' },
-        { title: 'Publish', icon: 'mdi-arrow-up-bold', nuxtLink: '/publisher' },
+        { title: "Dashboard", icon: "mdi-view-dashboard", nuxtLink: "/" },
+        { title: "Publish", icon: "mdi-arrow-up-bold", nuxtLink: "/publisher" },
         {
-          title: 'Download',
-          icon: 'mdi-arrow-down-bold',
-          nuxtLink: '/downloader'
+          title: "Download",
+          icon: "mdi-arrow-down-bold",
+          nuxtLink: "/downloader",
         },
         {
-          title: 'Settings',
-          icon: 'mdi-cog-outline',
-          nuxtLink: '/settings'
-        }
+          title: "Settings",
+          icon: "mdi-cog-outline",
+          nuxtLink: "/settings",
+        },
       ],
-      drawer: true
-    }
+      drawer: true,
+    };
   },
   computed: {
-    systemBar () {
-      return this.daemonConnected
-        ? {
-          colour: 'success',
-          daemonConnText: 'Connected to the daemon',
-          daemonConnIcon: 'mdi-power-plug'
-        }
-        : {
-          colour: '#FFEA00',
-          daemonConnText: 'Not Connected to the daemon',
-          daemonConnIcon: 'mdi-power-plug-off'
-        }
+    systemBar() {
+      const connected = {
+        colour: "success",
+        daemonConnText: "Connected to the daemon",
+        daemonConnIcon: "mdi-power-plug",
+      };
+      const notConnected = {
+        colour: "#FFEA00",
+        daemonConnText: "Not Connected to the daemon",
+        daemonConnIcon: "mdi-power-plug-off",
+      };
+      return this.daemonConnected ? connected : notConnected;
     },
-    daemonConnected () {
-      return this.$store.state.daemonConnected
-    }
+    daemonConnected() {
+      return this.$store.state.daemonConnected;
+    },
   },
-  created () {
-    this.$vuetify.theme.dark = true
+  created() {
+    this.$vuetify.theme.dark = true;
   },
-  mounted () {
-    this.$store.dispatch('initDaemonConnection')
-    this.$store.dispatch('setSysInfo')
+  mounted() {
+    this.$store.dispatch("initDaemonConnection");
+    this.$store.dispatch("setSysInfo");
   },
-  beforeDestroy () {
-    this.$store.dispatch('endDaemonConnection')
-  }
-}
+  beforeDestroy() {
+    this.$store.dispatch("endDaemonConnection");
+  },
+};
 </script>

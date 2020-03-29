@@ -15,11 +15,11 @@
 
 <script>
 export default {
-  data () {
-    return { test: null }
+  data() {
+    return { test: null };
   },
   methods: {
-    async getinfo () {}
-  }
-}
+    async getinfo() {},
+  },
+};
 </script>

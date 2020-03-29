@@ -4,12 +4,15 @@
       <v-card width="600" height="350" raised>
         <v-card-title>Use the text field below to Select a file:</v-card-title>
         <v-card-text>
-          <blockquote>The file name must have fewer than 16 characters (including spaces and file extension)</blockquote>
+          <blockquote>
+            The file name must have fewer than 16 characters (including spaces
+            and file extension)
+          </blockquote>
           <blockquote>
             The file must be present in the directory:
             <b>{{ dexp2pDir }}</b>
           </blockquote>
-          <br>
+          <br />
           <v-file-input
             v-model="chosenFile"
             label="Click here to select a file"
@@ -18,15 +21,18 @@
             show-size
             :disabled="uploading"
           />
-          <blockquote
-            v-if="uploading"
-          >
-            No new files can be selected/uploaded while a file is being uploaded.
+          <blockquote v-if="uploading">
+            No new files can be selected/uploaded while a file is being
+            uploaded.
           </blockquote>
         </v-card-text>
         <v-card-actions>
           <v-spacer />
-          <v-btn :disabled="uploadButtonDisabled" color="indigo" @click="upload_file">
+          <v-btn
+            :disabled="uploadButtonDisabled"
+            color="indigo"
+            @click="upload_file"
+          >
             <v-icon>mdi-cloud-upload</v-icon>
             <span>&nbsp;Upload</span>
           </v-btn>
@@ -57,78 +63,79 @@
 </template>
 
 <script>
-import * as path from 'path'
+import * as path from "path";
 
 export default {
-  name: 'PublisherPage',
-  data () {
+  name: "PublisherPage",
+  data() {
     return {
       chosenFile: null,
       uploading: false,
       uploadProgress: 0,
-      errors: []
-    }
+      errors: [],
+    };
   },
   computed: {
-    fileSelected () {
-      return this.chosenFile != null
+    fileSelected() {
+      return this.chosenFile != null;
     },
-    fileName () {
-      return this.fileSelected ? this.chosenFile.name : null
+    fileName() {
+      return this.fileSelected ? this.chosenFile.name : null;
     },
-    filePath () {
-      return this.fileSelected ? this.chosenFile.path : null
+    filePath() {
+      return this.fileSelected ? this.chosenFile.path : null;
     },
-    fileIsValid () {
-      return this.fileSelected ? this.fileName.length <= 15 : null
+    fileIsValid() {
+      return this.fileSelected ? this.fileName.length <= 15 : null;
     },
-    uploadButtonDisabled () {
-      return !(this.fileSelected && this.fileIsValid && !this.uploading)
+    uploadButtonDisabled() {
+      return !(this.fileSelected && this.fileIsValid && !this.uploading);
     },
-    chainRPC () {
-      return this.$store.state.chainObj.rpc()
+    chainRPC() {
+      return this.$store.state.chainObj.rpc();
     },
-    daemonConnected () {
-      return this.$store.state.daemonConnected
+    daemonConnected() {
+      return this.$store.state.daemonConnected;
     },
-    dexp2pDir () {
-      return this.$store.state.dexp2pDir
-    }
+    dexp2pDir() {
+      return this.$store.state.dexp2pDir;
+    },
   },
   watch: {
-    chosenFile (val) {
+    chosenFile(val) {
       if (val) {
         if (
           val.name.length > 15 &&
-          !(val.path == path.join(this.dexp2pDir, this.fileName))
+          !(val.path === path.join(this.dexp2pDir, this.fileName))
         ) {
           this.errors = [
-            `File should be present in the directory: ${this.dexp2pDir} and its name should have fewer than 16 characters`
-          ]
+            `File should be present in the directory: ${this.dexp2pDir} and its name should have fewer than 16 characters`,
+          ];
         } else if (val.name.length > 15) {
-          this.errors = ["File's name should have fewer than 16 characters"]
-        } else if (!(val.path == path.join(this.dexp2pDir, this.fileName))) {
+          this.errors = ["File's name should have fewer than 16 characters"];
+        } else if (!(val.path === path.join(this.dexp2pDir, this.fileName))) {
           this.errors = [
-            `File should be present in the directory: ${this.dexp2pDir}`
-          ]
+            `File should be present in the directory: ${this.dexp2pDir}`,
+          ];
         }
       } else {
-        this.errors = []
+        this.errors = [];
       }
-    }
+    },
   },
   methods: {
-    async upload_file () {
-      this.uploading = true
+    async upload_file() {
+      this.uploading = true;
       if (this.daemonConnected) {
+        console.log("have to use this condition");
       }
       try {
-        const resp = await this.chainRPC.DEX_publish(this.fileName)
-        console.log(resp)
+        const resp = await this.chainRPC.DEX_publish(this.fileName);
+        console.log(resp);
       } catch (error) {
-        console.log(error)
+        console.log(error);
       }
-    }
-  }
-}
+    },
+  },
+};
 </script>
