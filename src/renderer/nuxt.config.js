@@ -7,7 +7,7 @@
 module.exports = {
   mode: 'spa', // or 'universal'
   head: {
-    title: 'dexp2p-stream'
+    title: 'dexp2p-fileshare'
   },
   loading: false,
   plugins: [
@@ -20,17 +20,5 @@ module.exports = {
   modules: [
     '@nuxtjs/axios',
     '@nuxtjs/vuetify'
-  ],
-  vuetify: {
-    theme: {
-      themes: {
-        light: {
-          primary: '#1867c0',
-          secondary: '#b0bec5',
-          accent: '#8c9eff',
-          error: '#b71c1c'
-        }
-      }
-    }
-  }
+  ]
 }

@@ -44,53 +44,53 @@ export default {
   props: {
     // source: String
   },
-  data() {
+  data () {
     return {
-      sysBarColor: "success", // #FFEA00 #FF5722
+      sysBarColor: 'success', // #FFEA00 #FF5722
       navDrawerItems: [
-        { title: "Dashboard", icon: "mdi-view-dashboard", nuxtLink: "/" },
-        { title: "Publish", icon: "mdi-arrow-up-bold", nuxtLink: "/publisher" },
+        { title: 'Dashboard', icon: 'mdi-view-dashboard', nuxtLink: '/' },
+        { title: 'Publish', icon: 'mdi-arrow-up-bold', nuxtLink: '/publisher' },
         {
-          title: "Download",
-          icon: "mdi-arrow-down-bold",
-          nuxtLink: "/downloader"
+          title: 'Download',
+          icon: 'mdi-arrow-down-bold',
+          nuxtLink: '/downloader'
         },
         {
-          title: "Settings",
-          icon: "mdi-cog-outline",
-          nuxtLink: "/settings"
+          title: 'Settings',
+          icon: 'mdi-cog-outline',
+          nuxtLink: '/settings'
         }
       ],
       drawer: true
-    };
-  },
-  computed: {
-    systemBar() {
-      return this.daemonConnected
-        ? {
-            colour: "success",
-            daemonConnText: "Connected to the daemon",
-            daemonConnIcon: "mdi-power-plug"
-          }
-        : {
-            colour: "#FFEA00",
-            daemonConnText: "Not Connected to the daemon",
-            daemonConnIcon: "mdi-power-plug-off"
-          };
-    },
-    daemonConnected() {
-      return this.$store.state.daemonConnected;
     }
   },
-  created() {
-    this.$vuetify.theme.dark = true;
+  computed: {
+    systemBar () {
+      return this.daemonConnected
+        ? {
+          colour: 'success',
+          daemonConnText: 'Connected to the daemon',
+          daemonConnIcon: 'mdi-power-plug'
+        }
+        : {
+          colour: '#FFEA00',
+          daemonConnText: 'Not Connected to the daemon',
+          daemonConnIcon: 'mdi-power-plug-off'
+        }
+    },
+    daemonConnected () {
+      return this.$store.state.daemonConnected
+    }
   },
-  mounted() {
-    this.$store.dispatch("initDaemonConnection");
-    this.$store.dispatch("setSysInfo");
+  created () {
+    this.$vuetify.theme.dark = true
   },
-  beforeDestroy() {
-    this.$store.dispatch("endDaemonConnection");
+  mounted () {
+    this.$store.dispatch('initDaemonConnection')
+    this.$store.dispatch('setSysInfo')
+  },
+  beforeDestroy () {
+    this.$store.dispatch('endDaemonConnection')
   }
-};
+}
 </script>

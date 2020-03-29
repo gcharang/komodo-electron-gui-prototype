@@ -14,20 +14,12 @@
 </template>
 
 <script>
-import SmartChain from 'node-komodo-rpc'
-const chain = new SmartChain({
-  name: 'sahipsiz'
-})
-const rpc = chain.rpc()
 export default {
   data () {
     return { test: null }
   },
   methods: {
-    async getinfo () {
-      const resp = await rpc.getinfo()
-      this.test = resp
-    }
+    async getinfo () {}
   }
 }
 </script>
