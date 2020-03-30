@@ -97,7 +97,7 @@ export default {
   mounted() {
     this.$store.dispatch("initDaemonConnection");
     this.$store.dispatch("setSysInfo");
-    this.$store.dispatch("initSequelize");
+    this.$store.dispatch("initDbConn");
   },
   beforeDestroy() {
     this.$store.dispatch("endDaemonConnection");
