@@ -27,7 +27,7 @@
           />
           <blockquote v-if="uploading">
             No new files can be selected/uploaded while a file is being
-            uploaded. {{ chosenFile.size }}
+            uploaded.
           </blockquote>
         </v-card-text>
         <v-card-actions>
@@ -148,27 +148,6 @@ export default {
       } else {
         this.errors = [];
       }
-      /*
-      if (val) {
-        if (
-          val.name.length > 15 &&
-          !(val.path === path.join(this.dexp2pDir, this.fileName))
-        ) {
-          this.errors = [
-            `File should be present in the directory: 
-            ${this.dexp2pDir} and its name should have fewer than 16 characters`,
-          ];
-        } else if (val.name.length > 15) {
-          this.errors = ["File's name should have fewer than 16 characters"];
-        } else if (!(val.path === path.join(this.dexp2pDir, this.fileName))) {
-          this.errors = [
-            `File should be present in the directory: ${this.dexp2pDir}`,
-          ];
-        }
-      } else {
-        this.errors = [];
-      }
-      */
     },
   },
   methods: {
