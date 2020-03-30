@@ -100,6 +100,9 @@ export default {
     dexp2pDir() {
       return this.$store.state.dexp2pDir;
     },
+    dbPath() {
+      return this.$store.state.dbPath;
+    },
   },
   watch: {
     chosenFile(val) {
@@ -125,10 +128,11 @@ export default {
   },
   methods: {
     async upload_file() {
-      this.uploading = true;
-      if (this.daemonConnected) {
-        console.log("have to use this condition");
+      if (!this.daemonConnected) {
+        console.log("Make sure the daemon is running");
+        return;
       }
+      this.uploading = true;
       try {
         const resp = await this.chainRPC.DEX_publish(this.fileName);
         console.log(resp);

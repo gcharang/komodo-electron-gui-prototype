@@ -45,6 +45,10 @@
 </template>
 
 <script>
+import Vue from "vue";
+import moment from "moment";
+Vue.prototype.$moment = moment;
+
 export default {
   props: {
     // source: String
@@ -93,6 +97,7 @@ export default {
   mounted() {
     this.$store.dispatch("initDaemonConnection");
     this.$store.dispatch("setSysInfo");
+    this.$store.dispatch("initSequelize");
   },
   beforeDestroy() {
     this.$store.dispatch("endDaemonConnection");

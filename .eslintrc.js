@@ -6,7 +6,7 @@ module.exports = {
   },
   globals: {
     __resources: true,
-    //  $nuxt: true
+    $nuxt: true,
   },
   parserOptions: {
     sourceType: "module",

@@ -1,4 +1,7 @@
+import * as path from "path";
+import * as fs from "fs";
 import SmartChain from "node-komodo-rpc";
+import * as Sequelize from "sequelize";
 
 export const state = () => ({
   daemonConnected: false,
@@ -7,6 +10,8 @@ export const state = () => ({
   dexp2pDir: null,
   OS: null,
   intervalId: null,
+  publishData: {},
+  dbPath: null,
 });
 
 export const mutations = {
@@ -27,6 +32,9 @@ export const mutations = {
   },
   SET_INTERVAL_ID(state, payload) {
     state.intervalId = payload.intervalId;
+  },
+  SET_DB_PATH(state, payload) {
+    state.dbPath = payload.dbPath;
   },
 };
 
@@ -65,6 +73,35 @@ export const actions = {
     try {
       clearInterval(state.intervalId);
       commit("SET_INTERVAL_ID", { intervalId: null });
+    } catch (error) {
+      console.log(error);
+    }
+  },
+  async initSequelize({ commit, state }, payload) {
+    try {
+      if (!fs.existsSync(state.dexp2pDir)) {
+        fs.mkdirSync(state.dexp2pDir);
+      }
+      const dbPath = path.join(state.dexp2pDir, "dexp2p.sqlite");
+      commit("SET_DB_PATH", { dbPath });
+      const sequelize = new Sequelize({
+        dialect: "sqlite",
+        logging: false,
+        // SQLite only
+        storage: dbPath,
+      });
+      const FilePublishData = sequelize.define("filePublishData", {
+        id: {
+          type: Sequelize.STRING,
+          unique: true,
+          primaryKey: true,
+        },
+        fname: Sequelize.STRING,
+        filesize: Sequelize.STRING,
+        fragments: Sequelize.INTEGER,
+        filehash: Sequelize.STRING,
+        unixTimestamp: Sequelize.INTEGER,
+      });
     } catch (error) {
       console.log(error);
     }
