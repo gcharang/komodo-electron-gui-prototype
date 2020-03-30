@@ -36,6 +36,7 @@
     "ava": "2.4.0",
     "babel-eslint": "^10.1.0",
     "babel-plugin-webpack-alias-7": "0.1.1",
+    "better-sqlite3": "^6.0.1",
     "browser-env": "3.3.0",
     "cross-env": "7.0.2",
     "deepmerge": "4.2.2",
