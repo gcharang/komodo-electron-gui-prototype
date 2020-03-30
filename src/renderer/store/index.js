@@ -76,7 +76,7 @@ export const actions = {
       console.log(error);
     }
   },
-  async initSequelize({ commit, state }, payload) {
+  async initDbConn({ commit, state }, payload) {
     try {
       if (!fs.existsSync(state.dexp2pDir)) {
         fs.mkdirSync(state.dexp2pDir);
