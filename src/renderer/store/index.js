@@ -1,7 +1,15 @@
 import * as path from "path";
 import * as fs from "fs";
 import SmartChain from "node-komodo-rpc";
+import * as Sequelize from "sequelize";
+import sqlite3 from "sqlite3";
+/*
+https://gist.github.com/craigvantonder/f59277cd788f8aa755e3bdbe5d21f08e
+https://gist.github.com/jonataswalker/b5a5c008cb92a4721b1e83a2b3b22dc7
+must do:
+npm install -g -save node-gyp
 
+*/
 export const state = () => ({
   daemonConnected: false,
   chainName: "sahipsiz",
@@ -83,6 +91,28 @@ export const actions = {
       }
       const dbPath = path.join(state.dexp2pDir, "dexp2p.sqlite");
       commit("SET_DB_PATH", { dbPath });
+      const sequelize = new Sequelize({
+        dialect: "sqlite",
+        dialectModule: sqlite3,
+        logging: false,
+        // SQLite only
+        storage: dbPath,
+      });
+      const Transactions = sequelize.define("transactions", {
+        txid: {
+          type: Sequelize.STRING,
+          unique: true,
+          primaryKey: true,
+        },
+        txData: Sequelize.TEXT,
+        chain: Sequelize.STRING,
+        notaries: {
+          type: Sequelize.TEXT,
+          defaultValue: "",
+        },
+        height: Sequelize.INTEGER,
+        unixTimestamp: Sequelize.INTEGER,
+      });
     } catch (error) {
       console.log(error);
     }

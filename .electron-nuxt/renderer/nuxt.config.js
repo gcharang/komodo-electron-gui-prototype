@@ -30,6 +30,10 @@ const baseExtend = (config, { isClient }) => {
         include: ["dependencies"],
       },
     }),
+    "pg",
+    "pg-hstore",
+    "tedious",
+    "mariadb",
   ];
 
   config.target = "electron-renderer";
