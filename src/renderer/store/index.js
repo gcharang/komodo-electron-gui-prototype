@@ -1,7 +1,6 @@
 import * as path from "path";
 import * as fs from "fs";
 import SmartChain from "node-komodo-rpc";
-import * as Sequelize from "sequelize";
 
 export const state = () => ({
   daemonConnected: false,
@@ -84,24 +83,6 @@ export const actions = {
       }
       const dbPath = path.join(state.dexp2pDir, "dexp2p.sqlite");
       commit("SET_DB_PATH", { dbPath });
-      const sequelize = new Sequelize({
-        dialect: "sqlite",
-        logging: false,
-        // SQLite only
-        storage: dbPath,
-      });
-      const FilePublishData = sequelize.define("filePublishData", {
-        id: {
-          type: Sequelize.STRING,
-          unique: true,
-          primaryKey: true,
-        },
-        fname: Sequelize.STRING,
-        filesize: Sequelize.STRING,
-        fragments: Sequelize.INTEGER,
-        filehash: Sequelize.STRING,
-        unixTimestamp: Sequelize.INTEGER,
-      });
     } catch (error) {
       console.log(error);
     }

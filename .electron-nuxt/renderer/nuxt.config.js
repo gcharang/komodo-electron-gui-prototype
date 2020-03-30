@@ -28,12 +28,8 @@ const baseExtend = (config, { isClient }) => {
     nodeExternals({
       modulesFromFile: {
         include: ["dependencies"],
-        //    whitelist: ["sqlite3", "sequelize"],
       },
     }),
-    "pg",
-    "tedious",
-    "pg-hstore",
   ];
 
   config.target = "electron-renderer";
