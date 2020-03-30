@@ -5,12 +5,15 @@
         <v-card-title>Use the text field below to Select a file:</v-card-title>
         <v-card-text>
           <blockquote>
-            The file name must have fewer than 16 characters (including spaces
-            and file extension)
-          </blockquote>
-          <blockquote>
-            The file must be present in the directory:
-            <b>{{ dexp2pDir }}</b>
+            The file must satisfy the following conditions:
+            <li>
+              it must be present in the directory: <b>{{ dexp2pDir }}</b>
+            </li>
+            <li>
+              its name must have fewer than 16 characters (including spaces and
+              file extension)
+            </li>
+            <li>its size must be less than 100 MB</li>
           </blockquote>
           <br />
           <v-file-input
@@ -20,10 +23,11 @@
             :error-messages="errors"
             show-size
             :disabled="uploading"
+            @click="clearError"
           />
           <blockquote v-if="uploading">
             No new files can be selected/uploaded while a file is being
-            uploaded.
+            uploaded. {{ chosenFile.size }}
           </blockquote>
         </v-card-text>
         <v-card-actions>
@@ -86,10 +90,25 @@ export default {
       return this.fileSelected ? this.chosenFile.path : null;
     },
     fileIsValid() {
-      return this.fileSelected ? this.fileName.length <= 15 : null;
+      return this.fileSelected
+        ? this.fileName.length <= 15 && this.fileSize <= 100000
+        : null;
+    },
+    fileSize() {
+      return this.fileSelected ? this.chosenFile.size : null;
+    },
+    fileIsInDatadir() {
+      return this.fileSelected
+        ? this.chosenFile.path === path.join(this.dexp2pDir, this.fileName)
+        : null;
     },
     uploadButtonDisabled() {
-      return !(this.fileSelected && this.fileIsValid && !this.uploading);
+      return !(
+        this.fileSelected &&
+        this.fileIsValid &&
+        this.fileIsInDatadir &&
+        !this.uploading
+      );
     },
     chainRPC() {
       return this.$store.state.chainObj.rpc();
@@ -106,13 +125,38 @@ export default {
   },
   watch: {
     chosenFile(val) {
+      if (this.fileSelected) {
+        if (!this.fileIsInDatadir) {
+          this.errors[0] = this.errors[0]
+            ? this.errors[0] +
+              `File should be present in the directory: ${this.dexp2pDir}. `
+            : `File should be present in the directory: ${this.dexp2pDir}. `;
+        }
+        if (this.fileName.length > 15) {
+          this.errors[0] = this.errors[0]
+            ? this.errors[0] +
+              "File's name must have fewer than 16 characters. "
+            : "File's name must have fewer than 16 characters. ";
+        }
+        if (this.fileSize > 100000000) {
+          this.errors[0] = this.errors[0]
+            ? this.errors[0] +
+              this.errors[0] +
+              "File's size must be less than 100 MB. "
+            : "File's size must be less than 100 MB. ";
+        }
+      } else {
+        this.errors = [];
+      }
+      /*
       if (val) {
         if (
           val.name.length > 15 &&
           !(val.path === path.join(this.dexp2pDir, this.fileName))
         ) {
           this.errors = [
-            `File should be present in the directory: ${this.dexp2pDir} and its name should have fewer than 16 characters`,
+            `File should be present in the directory: 
+            ${this.dexp2pDir} and its name should have fewer than 16 characters`,
           ];
         } else if (val.name.length > 15) {
           this.errors = ["File's name should have fewer than 16 characters"];
@@ -124,6 +168,7 @@ export default {
       } else {
         this.errors = [];
       }
+      */
     },
   },
   methods: {
@@ -139,6 +184,9 @@ export default {
       } catch (error) {
         console.log(error);
       }
+    },
+    clearError() {
+      this.errors = [];
     },
   },
 };

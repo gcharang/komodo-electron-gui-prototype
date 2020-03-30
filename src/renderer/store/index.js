@@ -6,6 +6,10 @@ import sqlite3 from "sqlite3";
 /*
 https://gist.github.com/craigvantonder/f59277cd788f8aa755e3bdbe5d21f08e
 https://gist.github.com/jonataswalker/b5a5c008cb92a4721b1e83a2b3b22dc7
+https://web.archive.org/web/20160309223943/http://verysimple.com/2015/05/30/using-node_sqlite3-with-electron/
+https://www.techiediaries.com/electron-sqlite-windows/
+https://github.com/mapbox/node-sqlite3#source-install
+
 must do:
 npm install -g -save node-gyp
 
