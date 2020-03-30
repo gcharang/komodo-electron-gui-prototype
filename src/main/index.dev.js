@@ -18,7 +18,7 @@ if (process.platform === "win32") {
   const appUserDataPath = app.getPath("userData");
   const devToolsExtensionsPath = path.join(
     appUserDataPath,
-    "DevTools Extensions",
+    "DevTools Extensions"
   );
   try {
     fs.unlinkSync(devToolsExtensionsPath);

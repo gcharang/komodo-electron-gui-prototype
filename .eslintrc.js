@@ -15,7 +15,7 @@ module.exports = {
   extends: [
     "@nuxtjs",
     "plugin:vue/recommended",
-    "eslint:recommended",
+    //"eslint:recommended",
     "prettier/vue",
     "plugin:prettier/recommended",
   ],
@@ -32,8 +32,17 @@ module.exports = {
     curly: ["error", "multi-line"],
     "import/no-extraneous-dependencies": "off",
     "require-await": 0,
-
     "global-require": 0,
+    "comma-dangle": [
+      2,
+      {
+        arrays: "always-multiline",
+        objects: "always-multiline",
+        imports: "always-multiline",
+        exports: "always-multiline",
+        functions: "ignore",
+      },
+    ],
     "import/no-unresolved": 0,
     "import/newline-after-import": 0,
     "no-underscore-dangle": 0,

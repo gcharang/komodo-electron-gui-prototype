@@ -158,8 +158,9 @@ export default {
       }
       this.uploading = true;
       try {
-        const resp = await this.chainRPC.DEX_publish(this.fileName);
-        console.log(resp);
+        this.$store.state.latestPublishData = await this.chainRPC.DEX_publish(
+          this.fileName
+        );
       } catch (error) {
         console.log(error);
       }

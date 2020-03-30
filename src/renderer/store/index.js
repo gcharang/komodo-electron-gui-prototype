@@ -21,7 +21,7 @@ export const state = () => ({
   dexp2pDir: null,
   OS: null,
   intervalId: null,
-  publishData: {},
+  latestPublishData: {},
   dbPath: null,
 });
 
