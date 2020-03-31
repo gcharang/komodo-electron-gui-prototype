@@ -26,8 +26,7 @@
             @click="clearError"
           />
           <blockquote v-if="uploading">
-            No new files can be selected/uploaded while a file is being
-            uploaded.
+            Only one file can be uploaded at a time.
           </blockquote>
         </v-card-text>
         <v-card-actions>
@@ -59,11 +58,14 @@
             </v-progress-circular>
           </div>
         </v-row>
-        <v-card-text v-if="latestPublishData.fname">
-          <p>
-            The file named <b>{{ latestPublishData.fname }}</b> was successfully
-            published.
-          </p>
+        <v-card-text>
+          <blockquote v-if="uploading">
+            Publishing the file named <b>{{ fileName }}</b>
+          </blockquote>
+          <blockquote v-else-if="latestPublishData.fname">
+            Successfully published the file named
+            <b>{{ latestPublishData.fname }}</b>
+          </blockquote>
         </v-card-text>
       </v-card>
     </v-col>
@@ -167,7 +169,6 @@ export default {
       }
       this.uploading = true;
       try {
-        // this.$store.commit("SET_PUBLISH_PROGRESS", { publishProgress: 0 });
         this.$store.dispatch("getPublishProgress");
         const latestPublishData = await this.chainRPC.DEX_publish(
           this.fileName
@@ -180,17 +181,6 @@ export default {
         this.$store.commit("SET_LATEST_PUBLISH_DATA", {
           latestPublishData,
         });
-        const publishInfo = await this.chainRPC.DEX_stats();
-        console.log(publishInfo);
-      } catch (error) {
-        console.log(error);
-      }
-    },
-    async getDEXStats() {
-      try {
-        const resp = await this.chainRPC.DEX_stats();
-
-        console.log(this.latestPublishData);
       } catch (error) {
         console.log(error);
       }

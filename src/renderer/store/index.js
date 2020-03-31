@@ -128,21 +128,21 @@ export const actions = {
         // SQLite only
         storage: dbPath,
       });
-      const Transactions = sequelize.define("transactions", {
-        txid: {
+      const PublishedFiles = sequelize.define("publishedFiles", {
+        id: {
           type: Sequelize.STRING,
           unique: true,
           primaryKey: true,
         },
-        txData: Sequelize.TEXT,
-        chain: Sequelize.STRING,
-        notaries: {
-          type: Sequelize.TEXT,
-          defaultValue: "",
-        },
-        height: Sequelize.INTEGER,
+        filehash: Sequelize.STRING,
+        filesize: Sequelize.INTEGER,
+        fragments: Sequelize.INTEGER,
+        senderpub: Sequelize.STRING,
         unixTimestamp: Sequelize.INTEGER,
+        chainName: Sequelize.STRING,
+        chainMagic: Sequelize.INTEGER,
       });
+      await PublishedFiles.sync();
     } catch (error) {
       console.log(error);
     }
