@@ -23,6 +23,7 @@ export const state = () => ({
   intervalId: null,
   latestPublishData: {},
   dbPath: null,
+  publishProgress: 0,
 });
 
 export const mutations = {
@@ -33,7 +34,7 @@ export const mutations = {
     state.chainName = payload.chainName;
   },
   SET_CHAIN_OBJ(state, payload) {
-    state.chainObj = payload.chain;
+    state.chainObj = payload.chainObj;
   },
   SET_OS(state, payload) {
     state.OS = payload.OS;
@@ -44,19 +45,25 @@ export const mutations = {
   SET_INTERVAL_ID(state, payload) {
     state.intervalId = payload.intervalId;
   },
+  SET_LATEST_PUBLISH_DATA(state, payload) {
+    state.latestPublishData = payload.latestPublishData;
+  },
   SET_DB_PATH(state, payload) {
     state.dbPath = payload.dbPath;
+  },
+  SET_PUBLISH_PROGRESS(state, payload) {
+    state.publishProgress = payload.publishProgress;
   },
 };
 
 export const actions = {
   async initDaemonConnection({ commit, state }, payload) {
     try {
-      const chain = new SmartChain({
+      const chainObj = new SmartChain({
         name: state.chainName,
       });
-      const rpc = chain.rpc();
-      commit("SET_CHAIN_OBJ", { chain });
+      const rpc = chainObj.rpc();
+      commit("SET_CHAIN_OBJ", { chainObj });
       const testConn = async (rpc) => {
         const resp = await rpc.getinfo();
         if (resp.version) {
@@ -84,6 +91,25 @@ export const actions = {
     try {
       clearInterval(state.intervalId);
       commit("SET_INTERVAL_ID", { intervalId: null });
+    } catch (error) {
+      console.log(error);
+    }
+  },
+  async getPublishProgress({ commit, state }, payload) {
+    const rpc = state.chainObj.rpc();
+    try {
+      commit("SET_PUBLISH_PROGRESS", { publishProgress: 0 });
+      const intervalId = setInterval(async () => {
+        const resp = await rpc.DEX_stats();
+        if (state.publishProgress === 100) {
+          clearInterval(intervalId);
+        }
+        if (resp.progress) {
+          commit("SET_PUBLISH_PROGRESS", {
+            publishProgress: resp.progress,
+          });
+        }
+      }, 500);
     } catch (error) {
       console.log(error);
     }

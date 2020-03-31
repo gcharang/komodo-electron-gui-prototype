@@ -44,22 +44,26 @@
       </v-card>
     </v-col>
     <v-col cols="auto">
-      <v-card v-if="uploading" width="600" height="350" raised>
+      <v-card width="600" height="350" raised>
         <v-card-title>Progress</v-card-title>
         <v-row justify="center" align="center">
           <div class="text-center ma-12">
             <v-progress-circular
-              size="60"
-              :value="uploadProgress"
-              width="10"
+              size="85"
+              rotate="-90"
+              :value="publishProgress"
+              width="15"
               color="light-blue"
             >
-              {{ uploadProgress }}
+              {{ publishProgress }}
             </v-progress-circular>
           </div>
         </v-row>
-        <v-card-text>
-          <p>{{}}</p>
+        <v-card-text v-if="latestPublishData.fname">
+          <p>
+            The file named <b>{{ latestPublishData.fname }}</b> was successfully
+            published.
+          </p>
         </v-card-text>
       </v-card>
     </v-col>
@@ -75,7 +79,6 @@ export default {
     return {
       chosenFile: null,
       uploading: false,
-      uploadProgress: 0,
       errors: [],
     };
   },
@@ -91,7 +94,7 @@ export default {
     },
     fileIsValid() {
       return this.fileSelected
-        ? this.fileName.length <= 15 && this.fileSize <= 100000
+        ? this.fileName.length <= 15 && this.fileSize <= 100000000
         : null;
     },
     fileSize() {
@@ -121,6 +124,12 @@ export default {
     },
     dbPath() {
       return this.$store.state.dbPath;
+    },
+    publishProgress() {
+      return this.$store.state.publishProgress;
+    },
+    latestPublishData() {
+      return this.$store.state.latestPublishData;
     },
   },
   watch: {
@@ -158,9 +167,30 @@ export default {
       }
       this.uploading = true;
       try {
-        this.$store.state.latestPublishData = await this.chainRPC.DEX_publish(
+        // this.$store.commit("SET_PUBLISH_PROGRESS", { publishProgress: 0 });
+        this.$store.dispatch("getPublishProgress");
+        const latestPublishData = await this.chainRPC.DEX_publish(
           this.fileName
         );
+        console.log(latestPublishData);
+        if (latestPublishData.id) {
+          this.$store.commit("SET_PUBLISH_PROGRESS", { publishProgress: 100 });
+        }
+        this.uploading = false;
+        this.$store.commit("SET_LATEST_PUBLISH_DATA", {
+          latestPublishData,
+        });
+        const publishInfo = await this.chainRPC.DEX_stats();
+        console.log(publishInfo);
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    async getDEXStats() {
+      try {
+        const resp = await this.chainRPC.DEX_stats();
+
+        console.log(this.latestPublishData);
       } catch (error) {
         console.log(error);
       }
