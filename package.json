@@ -1,7 +1,7 @@
 {
   "name": "dexp2p-fileshare",
   "version": "0.0.1",
-  "description": "Publish and download streams using DEXP2P network of a Smart Chain",
+  "description": "Publish and download files using the DEXP2P network of a Smart Chain",
   "main": "./dist/main/index.js",
   "scripts": {
     "dev": "node .electron-nuxt/check-engines.js && cross-env-shell NODE_ENV=development node .electron-nuxt/index.js",

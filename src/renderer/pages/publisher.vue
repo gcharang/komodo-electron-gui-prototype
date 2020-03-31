@@ -7,7 +7,8 @@
           <blockquote>
             The file must satisfy the following conditions:
             <li>
-              it must be present in the directory: <b>{{ dexp2pDir }}</b>
+              it must be present in the directory:
+              <b>{{ dexp2pDir }}</b>
             </li>
             <li>
               its name must have fewer than 16 characters (including spaces and
@@ -47,7 +48,8 @@
         <v-card-title>Progress</v-card-title>
         <v-card-text>
           <blockquote v-if="uploading">
-            Publishing the file named <b>{{ fileName }}</b>
+            Publishing the file named
+            <b>{{ fileName }}</b>
           </blockquote>
           <blockquote v-else-if="latestPublishData.fname">
             Successfully published the file named
@@ -62,9 +64,8 @@
               :value="publishProgress"
               width="15"
               color="light-blue"
+              >{{ publishProgress }}</v-progress-circular
             >
-              {{ publishProgress }}
-            </v-progress-circular>
           </div>
         </v-row>
       </v-card>
@@ -76,9 +77,7 @@
         multi-line
       >
         {{ snackbarError }}
-        <v-btn text @click="snackbar = false">
-          Close
-        </v-btn>
+        <v-btn text @click="snackbar = false">Close</v-btn>
       </v-snackbar>
     </v-col>
     <v-col cols="auto">
@@ -102,9 +101,9 @@
           item-key="name"
           class="elevation-1"
         >
-          <template v-slot:item.filesize="{ item }"
-            >{{ prettyBytes(item.filesize) }}
-          </template>
+          <template v-slot:item.filesize="{ item }">{{
+            prettyBytes(item.filesize)
+          }}</template>
         </v-data-table>
       </v-card>
     </v-col>
@@ -113,7 +112,7 @@
 
 <script>
 import * as path from "path";
-import moment from "moment";
+// import moment from "moment";
 import prettyBytes from "pretty-bytes";
 export default {
   name: "PublisherPage",
@@ -259,7 +258,7 @@ export default {
               5
             )}.....${latestPublishData.senderpub.slice(-5)}`,
             chainNameAndMagic: `${this.$store.state.chainName} (${this.$store.state.chainMagic})`,
-            publishTimeStamp: moment(),
+            publishTimeStamp: this.$moment(),
           },
         });
       } catch (error) {
