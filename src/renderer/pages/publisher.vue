@@ -20,7 +20,7 @@
             v-model="chosenFile"
             label="Click here to select a file"
             outlined
-            :error-messages="errors"
+            :error-messages="error"
             show-size
             :disabled="uploading"
             @click="clearError"
@@ -45,6 +45,15 @@
     <v-col cols="auto">
       <v-card width="600" height="350" raised>
         <v-card-title>Progress</v-card-title>
+        <v-card-text>
+          <blockquote v-if="uploading">
+            Publishing the file named <b>{{ fileName }}</b>
+          </blockquote>
+          <blockquote v-else-if="latestPublishData.fname">
+            Successfully published the file named
+            <b>{{ latestPublishData.fname }}</b>
+          </blockquote>
+        </v-card-text>
         <v-row justify="center" align="center">
           <div class="text-center ma-12">
             <v-progress-circular
@@ -58,15 +67,45 @@
             </v-progress-circular>
           </div>
         </v-row>
-        <v-card-text>
-          <blockquote v-if="uploading">
-            Publishing the file named <b>{{ fileName }}</b>
-          </blockquote>
-          <blockquote v-else-if="latestPublishData.fname">
-            Successfully published the file named
-            <b>{{ latestPublishData.fname }}</b>
-          </blockquote>
-        </v-card-text>
+      </v-card>
+      <v-snackbar
+        v-model="snackbar"
+        :color="snackbarColor"
+        bottom
+        right
+        multi-line
+      >
+        {{ snackbarError }}
+        <v-btn text @click="snackbar = false">
+          Close
+        </v-btn>
+      </v-snackbar>
+    </v-col>
+    <v-col cols="auto">
+      <v-card width="1500" height="450" raised>
+        <v-app-bar>
+          <v-toolbar-title>Published files</v-toolbar-title>
+          <v-spacer></v-spacer>
+          <v-btn color="indigo" @click="refresh_publishedfiles_list">
+            <v-icon>mdi-refresh</v-icon>
+            <span>&nbsp;Refresh</span>
+          </v-btn>
+        </v-app-bar>
+        <v-data-table
+          :headers="headers"
+          :items="allPublishedFilesDataFromDB"
+          :items-per-page="5"
+          :sort-by="['publishTimeStamp']"
+          :sort-desc="[true]"
+          dense
+          multi-sort
+          item-key="name"
+          class="elevation-1"
+        >
+          <template v-slot:item.filesize="{ item }"
+            >{{ prettyBytes(item.filesize) }}
+          </template>
+        </v-data-table>
       </v-card>
     </v-col>
   </v-row>
@@ -74,14 +113,35 @@
 
 <script>
 import * as path from "path";
-
+import moment from "moment";
+import prettyBytes from "pretty-bytes";
 export default {
   name: "PublisherPage",
   data() {
     return {
       chosenFile: null,
       uploading: false,
-      errors: [],
+      error: "",
+      snackbar: false,
+      snackbarColor: "error",
+      snackbarError: "",
+      fileSizeLimit: 100000000,
+      headers: [
+        {
+          text: "File Name",
+          align: "start",
+          sortable: false,
+          value: "filename",
+        },
+        // { text: "Address", sortable: false, value: "address" },
+        { text: "Time", value: "publishTimeStamp" },
+        { text: "File Size", value: "filesize" },
+        { text: "id", value: "id" },
+        { text: "Number of Fragments", value: "fragments" },
+        { text: "File hash", value: "filehash" },
+        { text: "Chain Details", value: "chainNameAndMagic" },
+        { text: "Sender Pubkey", value: "senderpub" },
+      ],
     };
   },
   computed: {
@@ -96,7 +156,7 @@ export default {
     },
     fileIsValid() {
       return this.fileSelected
-        ? this.fileName.length <= 15 && this.fileSize <= 100000000
+        ? this.fileName.length <= 15 && this.fileSize <= this.fileSizeLimit
         : null;
     },
     fileSize() {
@@ -133,27 +193,27 @@ export default {
     latestPublishData() {
       return this.$store.state.latestPublishData;
     },
+    allPublishedFilesDataFromDB() {
+      return this.$store.state.allPublishedFilesDataFromDB;
+    },
   },
   watch: {
     chosenFile(val) {
       if (this.fileSelected) {
         if (!this.fileIsInDatadir) {
-          this.errors[0] = this.errors[0]
-            ? this.errors[0] +
+          this.error = this.error
+            ? this.error +
               `File should be present in the directory: ${this.dexp2pDir}. `
             : `File should be present in the directory: ${this.dexp2pDir}. `;
         }
         if (this.fileName.length > 15) {
-          this.errors[0] = this.errors[0]
-            ? this.errors[0] +
-              "File's name must have fewer than 16 characters. "
+          this.error = this.error
+            ? this.error + "File's name must have fewer than 16 characters. "
             : "File's name must have fewer than 16 characters. ";
         }
-        if (this.fileSize > 100000000) {
-          this.errors[0] = this.errors[0]
-            ? this.errors[0] +
-              this.errors[0] +
-              "File's size must be less than 100 MB. "
+        if (this.fileSize > this.fileSizeLimit) {
+          this.error = this.error
+            ? this.error + "File's size must be less than 100 MB. "
             : "File's size must be less than 100 MB. ";
         }
       } else {
@@ -162,9 +222,14 @@ export default {
     },
   },
   methods: {
+    prettyBytes(filesize) {
+      return prettyBytes(filesize);
+    },
     async upload_file() {
       if (!this.daemonConnected) {
-        console.log("Make sure the daemon is running");
+        this.snackbarError = "Wait till the daemon is running";
+        this.snackbar = true;
+        // console.log("Make sure the daemon is running");
         return;
       }
       this.uploading = true;
@@ -173,7 +238,6 @@ export default {
         const latestPublishData = await this.chainRPC.DEX_publish(
           this.fileName
         );
-        console.log(latestPublishData);
         if (latestPublishData.id) {
           this.$store.commit("SET_PUBLISH_PROGRESS", { publishProgress: 100 });
         }
@@ -181,12 +245,34 @@ export default {
         this.$store.commit("SET_LATEST_PUBLISH_DATA", {
           latestPublishData,
         });
+        this.$store.dispatch("storePublishDataInDB", { latestPublishData });
+        // const transformedLatestPublishData =
+        this.$store.dispatch("addFileToPublishedFileDataFromDB", {
+          file: {
+            id: latestPublishData.id,
+            filehash: latestPublishData.filehash,
+            filename: latestPublishData.fname,
+            filesize: latestPublishData.filesize,
+            fragments: latestPublishData.fragments,
+            senderpub: `${latestPublishData.senderpub.slice(
+              0,
+              5
+            )}.....${latestPublishData.senderpub.slice(-5)}`,
+            chainNameAndMagic: `${this.$store.state.chainName} (${this.$store.state.chainMagic})`,
+            publishTimeStamp: moment(),
+          },
+        });
       } catch (error) {
-        console.log(error);
+        this.snackbarError = error;
+        this.snackbar = true;
+        // console.log(error);
       }
     },
     clearError() {
-      this.errors = [];
+      this.error = "";
+    },
+    refresh_publishedfiles_list() {
+      this.$store.dispatch("getPublishedFilesDataFromDB");
     },
   },
 };

@@ -38,6 +38,19 @@
       </v-container>
     </v-content>
 
+    <v-snackbar
+      :value="globalSnackbar"
+      :color="globalSnackbarColor"
+      bottom
+      right
+      multi-line
+    >
+      {{ globalSnackbarError }}
+      <v-btn text @click="setGlobalSnackbarFalse">
+        Close
+      </v-btn>
+    </v-snackbar>
+
     <v-footer app>
       <span>&copy; {{ new Date().getFullYear() }}</span>
     </v-footer>
@@ -90,7 +103,28 @@ export default {
     daemonConnected() {
       return this.$store.state.daemonConnected;
     },
+    globalSnackbar() {
+      return this.$store.state.globalSnackbar;
+    },
+    /*
+    globalSnackbar: {
+      get: (vm) => {
+        return this.$store.state.globalSnackbar;
+      },
+      
+      set: (newValue) => {
+        this.$store.commit("SET_GLOBAL_SNACKBAR", { status: newValue });
+      },
+     
+    }, */
+    globalSnackbarError() {
+      return this.$store.state.globalSnackbarError;
+    },
+    globalSnackbarColor() {
+      return this.$store.state.globalSnackbarColor;
+    },
   },
+
   created() {
     this.$vuetify.theme.dark = true;
   },
@@ -101,6 +135,11 @@ export default {
   },
   beforeDestroy() {
     this.$store.dispatch("endDaemonConnection");
+  },
+  methods: {
+    setGlobalSnackbarFalse() {
+      this.$store.commit("SET_GLOBAL_SNACKBAR", { globalSnackbar: false });
+    },
   },
 };
 </script>

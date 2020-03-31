@@ -52,6 +52,7 @@
     "node-komodo-rpc": "^2.0.3",
     "nuxt": "2.11.0",
     "prettier": "^2.0.2",
+    "pretty-bytes": "^5.3.0",
     "require-extension-hooks": "0.3.3",
     "require-extension-hooks-babel": "1.0.0",
     "require-extension-hooks-vue": "0.4.2",
