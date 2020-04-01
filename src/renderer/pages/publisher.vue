@@ -101,9 +101,9 @@
           item-key="name"
           class="elevation-1"
         >
-          <template v-slot:item.filesize="{ item }">
-            {{ prettyBytes(item.filesize) }}
-          </template>
+          <template v-slot:item.filesize="{ item }">{{
+            prettyBytes(item.filesize)
+          }}</template>
         </v-data-table>
       </v-card>
     </v-col>

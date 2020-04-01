@@ -24,8 +24,8 @@ maybe sqlite3 should be in deps instead of devdeps also?
 
 export const state = () => ({
   daemonConnected: false,
-  chainName: "sahipsiz",
-  chainMagic: 1890685667,
+  chainName: "FILESHARE",
+  chainMagic: 1569378783,
   getInfo: {},
   chainObj: null,
   dexp2pDir: null,
@@ -123,7 +123,7 @@ export const actions = {
         if (resp.version) {
           commit("SET_DAEMON_CONNECTION_STATUS", { status: "ok" });
           commit("SET_CHAIN_NAME", {
-            chainName: resp.name.toLowerCase(),
+            chainName: resp.name,
           });
           commit("SET_CHAIN_MAGIC", { chainMagic: resp.magic });
           commit("SET_GET_INFO", { getInfo: resp });
