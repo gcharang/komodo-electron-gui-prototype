@@ -81,7 +81,7 @@
       </v-snackbar>
     </v-col>
     <v-col cols="auto">
-      <v-card width="1500" height="450" raised>
+      <v-card width="1500" height="400" raised>
         <v-app-bar>
           <v-toolbar-title>Published files</v-toolbar-title>
           <v-spacer></v-spacer>
@@ -101,9 +101,9 @@
           item-key="name"
           class="elevation-1"
         >
-          <template v-slot:item.filesize="{ item }">{{
-            prettyBytes(item.filesize)
-          }}</template>
+          <template v-slot:item.filesize="{ item }">
+            {{ prettyBytes(item.filesize) }}
+          </template>
         </v-data-table>
       </v-card>
     </v-col>
