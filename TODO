@@ -1,6 +1,6 @@
 - Dashboard page with all the current info displayed and buttons to get mining info, peerinfo and other infos
 - free form input and output to komodod like the console in qt wallet
 - delete residue from published files before closing the app
-- settings page with all the restrictions on chain name, magic, komodod version, komodod hash etc.,
+- settings page with all the restrictions on chain name, magic, komodod version, komodod hash, signature from publisher etc.,
 - ability to generate key pair on the fly or import preexisting one
 - cleanup datadirectory to start a smartchain with same name again

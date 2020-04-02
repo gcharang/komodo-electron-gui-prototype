@@ -25,6 +25,7 @@
             show-size
             :disabled="uploading"
             @click="clearError"
+            @click:clear="clearError"
           />
           <blockquote v-if="uploading">
             Only one file can be uploaded at a time.
@@ -112,7 +113,6 @@
 
 <script>
 import * as path from "path";
-// import moment from "moment";
 import prettyBytes from "pretty-bytes";
 export default {
   name: "PublisherPage",

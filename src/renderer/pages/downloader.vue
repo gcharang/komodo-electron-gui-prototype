@@ -5,7 +5,7 @@
         <v-card-title>Download</v-card-title>
 
         <v-card-text>
-          <p>{{}}</p>
+          <blockquote>{{}}</blockquote>
         </v-card-text>
       </v-card>
     </v-col>
