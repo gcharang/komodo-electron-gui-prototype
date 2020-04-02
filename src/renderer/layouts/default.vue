@@ -2,12 +2,7 @@
   <v-app id="inspire">
     <v-navigation-drawer v-model="drawer" app clipped expand-on-hover>
       <v-list>
-        <v-list-item
-          v-for="item in navDrawerItems"
-          :key="item.title"
-          :to="item.nuxtLink"
-          nuxt
-        >
+        <v-list-item v-for="item in navDrawerItems" :key="item.title" :to="item.nuxtLink" nuxt>
           <v-list-item-icon>
             <v-icon>{{ item.icon }}</v-icon>
           </v-list-item-icon>
@@ -38,17 +33,9 @@
       </v-container>
     </v-content>
 
-    <v-snackbar
-      :value="globalSnackbar"
-      :color="globalSnackbarColor"
-      bottom
-      right
-      multi-line
-    >
+    <v-snackbar :value="globalSnackbar" :color="globalSnackbarColor" bottom right multi-line>
       {{ globalSnackbarError }}
-      <v-btn text @click="setGlobalSnackbarFalse">
-        Close
-      </v-btn>
+      <v-btn text @click="setGlobalSnackbarFalse">Close</v-btn>
     </v-snackbar>
 
     <v-footer app>
@@ -70,7 +57,7 @@ export default {
     return {
       sysBarColor: "success", // #FFEA00 #FF5722
       navDrawerItems: [
-        { title: "Dashboard", icon: "mdi-view-dashboard", nuxtLink: "/" },
+        { title: "Settings", icon: "mdi-cog-outline", nuxtLink: "/" },
         { title: "Publish", icon: "mdi-arrow-up-bold", nuxtLink: "/publisher" },
         {
           title: "Download",
@@ -78,9 +65,9 @@ export default {
           nuxtLink: "/downloader",
         },
         {
-          title: "Settings",
-          icon: "mdi-cog-outline",
-          nuxtLink: "/settings",
+          title: "Dashboard",
+          icon: "mdi-view-dashboard",
+          nuxtLink: "/dashboard",
         },
       ],
       drawer: true,

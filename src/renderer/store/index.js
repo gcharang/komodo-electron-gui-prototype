@@ -129,6 +129,12 @@ export const actions = {
           commit("SET_GET_INFO", { getInfo: resp });
         } else {
           console.log(`Response from getinfo call: ${resp}`);
+          commit("SET_GLOBAL_SNACKBAR_ERROR", {
+            globalSnackbarColor: `Response from getinfo call: ${resp}`,
+          });
+          commit("SET_GLOBAL_SNACKBAR", {
+            globalSnackbar: true,
+          });
           commit("SET_DAEMON_CONNECTION_STATUS", { status: "notOk" });
         }
       };
