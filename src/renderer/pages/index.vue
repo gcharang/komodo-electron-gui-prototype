@@ -6,6 +6,24 @@
           <v-toolbar-title>Control</v-toolbar-title><v-spacer />
         </v-toolbar>
         <v-container fluid>
+          <v-text-field
+            v-model="dummy"
+            prepend-icon="mdi-account-outline"
+            :disabled="true"
+            label="Pubkey/Address"
+          ></v-text-field>
+          <v-text-field
+            v-model="wifPrivKeySeed"
+            :append-icon="showWif ? 'mdi-eye' : 'mdi-eye-off'"
+            :type="showWif ? 'text' : 'password'"
+            prepend-icon="mdi-key-outline"
+            :disabled="false"
+            label="WIF/PrivateKey/Seed Words"
+            outlined
+            @click:append="showWif = !showWif"
+          ></v-text-field>
+        </v-container>
+        <v-container fluid>
           <v-card-actions>
             <v-spacer />
             <v-btn
@@ -322,18 +340,16 @@
             :disabled="true"
             label="Pubkey/Address"
           ></v-text-field>
-          <v-textarea
+          <v-text-field
             v-model="wifPrivKeySeed"
             :append-icon="showWif ? 'mdi-eye' : 'mdi-eye-off'"
             :type="showWif ? 'text' : 'password'"
             prepend-icon="mdi-key-outline"
             :disabled="false"
             label="WIF/PrivateKey/Seed Words"
-            clearable
             outlined
-            no-resize
             @click:append="showWif = !showWif"
-          ></v-textarea>
+          ></v-text-field>
         </v-container>
         <v-toolbar>
           <v-toolbar-title>Additional Config (Optional)</v-toolbar-title
@@ -479,6 +495,7 @@ export default {
       displayLaunchResult: false,
       expectedConstantsLocked: false,
       showWif: false,
+      wifPrivKeySeed: "",
       dummy: "",
     };
   },
