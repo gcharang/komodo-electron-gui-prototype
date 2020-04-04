@@ -1,8 +1,8 @@
 <template>
   <v-row justify="center">
     <v-col cols="auto">
-      <v-card width="1400" min-height="100" raised>
-        <v-toolbar>
+      <v-card min-width="1300" min-height="100" raised>
+        <v-toolbar dense>
           <v-toolbar-title>Control</v-toolbar-title><v-spacer />
         </v-toolbar>
         <v-container fluid>
@@ -17,17 +17,15 @@
             :append-icon="showWif ? 'mdi-eye' : 'mdi-eye-off'"
             :type="showWif ? 'text' : 'password'"
             prepend-icon="mdi-key-outline"
-            :disabled="false"
+            :disabled="true"
             label="WIF/PrivateKey/Seed Words"
             outlined
             @click:append="showWif = !showWif"
           ></v-text-field>
-        </v-container>
-        <v-container fluid>
+
           <v-card-actions>
             <v-spacer />
             <v-btn
-              x-large
               color="error"
               :loading="calcFileHashIsRunning"
               @click="launchSmartChain"
@@ -37,7 +35,6 @@
             </v-btn>
             <v-btn
               color="success"
-              x-large
               :loading="calcFileHashIsRunning"
               @click="launchSmartChain"
             >
@@ -50,8 +47,8 @@
       </v-card>
     </v-col>
     <v-col cols="auto">
-      <v-card width="450" min-height="650" raised>
-        <v-toolbar>
+      <v-card width="450" height="600" raised>
+        <v-toolbar dense>
           <v-toolbar-title>Select the Komodo Daemon</v-toolbar-title
           ><v-spacer />
           <v-tooltip top>
@@ -89,7 +86,7 @@
             @click="clearError"
             @click:clear="clearError"
           />
-          <v-card min-height="150">
+          <v-card min-height="100">
             <v-card-text>
               <blockquote v-if="fileIsValid">
                 The path of the selected Komodo Daemon is
@@ -98,7 +95,7 @@
             </v-card-text>
           </v-card>
         </v-container>
-        <v-toolbar>
+        <v-toolbar dense>
           <v-toolbar-title>Verify Authenticity (Optional)</v-toolbar-title
           ><v-spacer />
           <v-tooltip top>
@@ -160,8 +157,8 @@
     </v-col>
 
     <v-col cols="auto">
-      <v-card width="450" min-height="650" raised>
-        <v-toolbar>
+      <v-card width="900" min-height="600" raised>
+        <v-toolbar dense>
           <v-toolbar-title>Input Launch Parameters</v-toolbar-title><v-spacer />
           <v-tooltip top>
             <template v-slot:activator="{ on }">
@@ -196,250 +193,210 @@
             :disabled="launchParamsInputDisabled"
           >
           </v-textarea>
-          <v-card-text>
-            <blockquote>
-              Example:
-              <b
-                >./komodod -ac_name=TEST -ac_supply=9001 -ac_reward=1 -ac_cc=3
-                -addnode=75.210.12.85
-              </b>
-            </blockquote>
-          </v-card-text>
-        </v-container>
-        <v-toolbar>
-          <v-toolbar-title>Expected constants (Optional)</v-toolbar-title
-          ><v-spacer />
-          <v-tooltip top>
-            <template v-slot:activator="{ on }">
-              <v-checkbox
-                v-model="expectedConstantsEnabled"
-                hide-details
-                :disabled="!launchParamsLocked"
-                v-on="on"
-              >
-              </v-checkbox>
-            </template>
-            <span>{{
-              expectedConstantsEnabled ? "Click to  Disable" : "Click to Enable"
-            }}</span>
-          </v-tooltip>
-          <v-spacer />
-          <v-tooltip top>
-            <template v-slot:activator="{ on }">
-              <v-switch
-                v-model="expectedConstantsLocked"
-                :disabled="expectedConstantsSwitchIsDisabled"
-                inset
-                hide-details
-                v-on="on"
-                ><template v-slot:prepend>
-                  <v-icon v-if="expectedConstantsLocked" color="success"
-                    >mdi-lock-check
-                  </v-icon>
-                  <v-icon v-else color="error">mdi-lock-open-variant </v-icon>
-                </template>
-              </v-switch>
-            </template>
-            <span>{{
-              expectedConstantsLocked
-                ? "Click the switch to modify the Expected Constants"
-                : "Click the switch to CONFIRM your input"
-            }}</span>
-          </v-tooltip>
-        </v-toolbar>
-        <v-container fluid>
-          <v-row>
-            <v-col>
-              <v-text-field
-                v-model="expectedMagicNumber"
-                prepend-icon="mdi-check"
-                :disabled="expectedConstantTextFieldInputIsDisabled"
-                label="Magic Number"
-              ></v-text-field>
-            </v-col>
-            <v-col>
-              <v-text-field
-                v-model="expectedP2Pport"
-                prepend-icon="mdi-lan-connect"
-                :disabled="expectedConstantTextFieldInputIsDisabled"
-                label="P2P Port"
-              ></v-text-field>
-            </v-col>
-          </v-row>
-          <v-row>
-            <v-col>
-              <v-text-field
-                v-model="expectedRPCport"
-                prepend-icon="mdi-remote-desktop"
-                :disabled="expectedConstantTextFieldInputIsDisabled"
-                label="RPC Port"
-              ></v-text-field>
-            </v-col>
-            <v-col>
-              <v-text-field
-                v-model="expectedVersion"
-                prepend-icon="mdi-alpha-v-box"
-                :disabled="expectedConstantTextFieldInputIsDisabled"
-                label="version"
-              ></v-text-field>
-            </v-col>
-          </v-row>
-          <v-row>
-            <v-col>
-              <v-text-field
-                v-model="expectedKMDversion"
-                prepend-icon="mdi-alpha-k-box"
-                :disabled="expectedConstantTextFieldInputIsDisabled"
-                label="KMDversion"
-              ></v-text-field>
-            </v-col>
-            <v-col>
-              <v-text-field
-                v-model="expectedProtocolVersion"
-                prepend-icon="mdi-alpha-p-box"
-                :disabled="expectedConstantTextFieldInputIsDisabled"
-                label="protocolversion"
-              ></v-text-field>
-            </v-col>
-          </v-row>
-        </v-container>
-      </v-card>
-    </v-col>
 
-    <v-col cols="auto">
-      <v-card width="450" min-height="650" raised>
-        <v-toolbar>
-          <v-toolbar-title>Key Pair</v-toolbar-title><v-spacer />
-          <v-tooltip top>
-            <template v-slot:activator="{ on }">
-              <v-switch
-                v-model="keypairLocked"
-                :disabled="!launchParamsLocked"
-                inset
-                hide-details
-                v-on="on"
-                ><template v-slot:prepend>
-                  <v-icon v-if="keypairLocked" color="success"
-                    >mdi-lock-check
-                  </v-icon>
-                  <v-icon v-else color="error">mdi-lock-open-variant </v-icon>
-                </template>
-              </v-switch>
-            </template>
-            <span>{{
-              keypairLocked
-                ? "Click the switch to modify the Launch Parameters"
-                : "Click the switch to CONFIRM your input"
-            }}</span>
-          </v-tooltip>
-        </v-toolbar>
-        <v-container fluid>
-          <v-text-field
-            v-model="dummy"
-            prepend-icon="mdi-account-outline"
-            :disabled="true"
-            label="Pubkey/Address"
-          ></v-text-field>
-          <v-text-field
-            v-model="wifPrivKeySeed"
-            :append-icon="showWif ? 'mdi-eye' : 'mdi-eye-off'"
-            :type="showWif ? 'text' : 'password'"
-            prepend-icon="mdi-key-outline"
-            :disabled="false"
-            label="WIF/PrivateKey/Seed Words"
-            outlined
-            @click:append="showWif = !showWif"
-          ></v-text-field>
-        </v-container>
-        <v-toolbar>
-          <v-toolbar-title>Additional Config (Optional)</v-toolbar-title
-          ><v-spacer />
-          <v-tooltip top>
-            <template v-slot:activator="{ on }">
-              <v-checkbox
-                v-model="expectedConstantsEnabled"
-                hide-details
-                :disabled="!launchParamsLocked"
-                v-on="on"
-              >
-              </v-checkbox>
-            </template>
-            <span>{{
-              expectedConstantsEnabled ? "Click to  Disable" : "Click to Enable"
-            }}</span>
-          </v-tooltip>
-          <v-spacer />
-          <v-tooltip top>
-            <template v-slot:activator="{ on }">
-              <v-switch
-                v-model="expectedConstantsLocked"
-                :disabled="expectedConstantsSwitchIsDisabled"
-                inset
-                hide-details
-                v-on="on"
-                ><template v-slot:prepend>
-                  <v-icon v-if="expectedConstantsLocked" color="success"
-                    >mdi-lock-check
-                  </v-icon>
-                  <v-icon v-else color="error">mdi-lock-open-variant </v-icon>
-                </template>
-              </v-switch>
-            </template>
-            <span>{{
-              expectedConstantsLocked
-                ? "Click the switch to modify the Expected Constants"
-                : "Click the switch to CONFIRM your input"
-            }}</span>
-          </v-tooltip>
-        </v-toolbar>
-        <v-container fluid>
-          <v-textarea
-            v-model="dummy"
-            prepend-icon="mdi-folder"
-            label="Blockchain Data Directory"
-            :disabled="true"
-            row-height="20"
-            outlined
-            auto-grow
-          ></v-textarea>
           <v-row>
-            <v-col>
-              <v-checkbox
-                v-model="dummy"
-                prepend-icon="mdi-swap-vertical"
-                hide-details
-                label="dexp2p"
-              >
-              </v-checkbox>
+            <v-col cols="auto">
+              <v-card width="425" height="350" raised>
+                <v-toolbar dense>
+                  <v-toolbar-title>Additional Config</v-toolbar-title
+                  ><v-spacer />
+                  <v-tooltip top>
+                    <template v-slot:activator="{ on }">
+                      <v-checkbox
+                        v-model="expectedConstantsEnabled"
+                        hide-details
+                        :disabled="!launchParamsLocked"
+                        v-on="on"
+                      >
+                      </v-checkbox>
+                    </template>
+                    <span>{{
+                      expectedConstantsEnabled
+                        ? "Click to  Disable"
+                        : "Click to Enable"
+                    }}</span>
+                  </v-tooltip>
+                  <v-tooltip top>
+                    <template v-slot:activator="{ on }">
+                      <v-switch
+                        v-model="expectedConstantsLocked"
+                        :disabled="expectedConstantsSwitchIsDisabled"
+                        inset
+                        hide-details
+                        v-on="on"
+                        ><template v-slot:prepend>
+                          <v-icon v-if="expectedConstantsLocked" color="success"
+                            >mdi-lock-check
+                          </v-icon>
+                          <v-icon v-else color="error"
+                            >mdi-lock-open-variant
+                          </v-icon>
+                        </template>
+                      </v-switch>
+                    </template>
+                    <span>{{
+                      expectedConstantsLocked
+                        ? "Click the switch to modify the Expected Constants"
+                        : "Click the switch to CONFIRM your input"
+                    }}</span>
+                  </v-tooltip>
+                </v-toolbar>
+                <v-container fluid>
+                  <v-textarea
+                    v-model="dummy"
+                    prepend-icon="mdi-folder"
+                    label="Blockchain Data Directory"
+                    :disabled="true"
+                    row-height="20"
+                    outlined
+                    auto-grow
+                  ></v-textarea>
+                  <v-row>
+                    <v-col>
+                      <v-checkbox
+                        v-model="dummy"
+                        prepend-icon="mdi-swap-vertical"
+                        hide-details
+                        label="dexp2p"
+                      >
+                      </v-checkbox>
+                    </v-col>
+                    <v-col>
+                      <v-checkbox
+                        v-model="dummy"
+                        prepend-icon="mdi-wallet-outline"
+                        hide-details
+                        label="testnode"
+                      >
+                      </v-checkbox>
+                    </v-col>
+                  </v-row>
+                  <v-row>
+                    <v-col>
+                      <v-checkbox
+                        v-model="dummy"
+                        prepend-icon="mdi-file-cabinet"
+                        hide-details
+                        label="reindex"
+                      >
+                      </v-checkbox>
+                    </v-col>
+                    <v-col>
+                      <v-checkbox
+                        v-model="dummy"
+                        prepend-icon="mdi-wallet-outline"
+                        hide-details
+                        label="rescan"
+                      >
+                      </v-checkbox>
+                    </v-col>
+                  </v-row>
+                </v-container>
+              </v-card>
             </v-col>
-            <v-col>
-              <v-checkbox
-                v-model="dummy"
-                prepend-icon="mdi-wallet-outline"
-                hide-details
-                label="testnode"
-              >
-              </v-checkbox>
-            </v-col>
-          </v-row>
-          <v-row>
-            <v-col>
-              <v-checkbox
-                v-model="dummy"
-                prepend-icon="mdi-file-cabinet"
-                hide-details
-                label="reindex"
-              >
-              </v-checkbox>
-            </v-col>
-            <v-col>
-              <v-checkbox
-                v-model="dummy"
-                prepend-icon="mdi-wallet-outline"
-                hide-details
-                label="rescan"
-              >
-              </v-checkbox>
+            <v-col cols="auto">
+              <v-card width="425" height="350" raised>
+                <v-toolbar dense>
+                  <v-toolbar-title>Expected constants</v-toolbar-title
+                  ><v-spacer />
+                  <v-tooltip top>
+                    <template v-slot:activator="{ on }">
+                      <v-checkbox
+                        v-model="expectedConstantsEnabled"
+                        hide-details
+                        :disabled="!launchParamsLocked"
+                        v-on="on"
+                      >
+                      </v-checkbox>
+                    </template>
+                    <span>{{
+                      expectedConstantsEnabled
+                        ? "Click to  Disable"
+                        : "Click to Enable"
+                    }}</span>
+                  </v-tooltip>
+                  <v-tooltip top>
+                    <template v-slot:activator="{ on }">
+                      <v-switch
+                        v-model="expectedConstantsLocked"
+                        :disabled="expectedConstantsSwitchIsDisabled"
+                        inset
+                        hide-details
+                        v-on="on"
+                        ><template v-slot:prepend>
+                          <v-icon v-if="expectedConstantsLocked" color="success"
+                            >mdi-lock-check
+                          </v-icon>
+                          <v-icon v-else color="error"
+                            >mdi-lock-open-variant
+                          </v-icon>
+                        </template>
+                      </v-switch>
+                    </template>
+                    <span>{{
+                      expectedConstantsLocked
+                        ? "Click the switch to modify the Expected Constants"
+                        : "Click the switch to CONFIRM your input"
+                    }}</span>
+                  </v-tooltip>
+                </v-toolbar>
+                <v-container fluid>
+                  <v-row>
+                    <v-col>
+                      <v-text-field
+                        v-model="expectedMagicNumber"
+                        prepend-icon="mdi-check"
+                        :disabled="expectedConstantTextFieldInputIsDisabled"
+                        label="Magic Number"
+                      ></v-text-field>
+                    </v-col>
+                    <v-col>
+                      <v-text-field
+                        v-model="expectedP2Pport"
+                        prepend-icon="mdi-lan-connect"
+                        :disabled="expectedConstantTextFieldInputIsDisabled"
+                        label="P2P Port"
+                      ></v-text-field>
+                    </v-col>
+                  </v-row>
+                  <v-row>
+                    <v-col>
+                      <v-text-field
+                        v-model="expectedRPCport"
+                        prepend-icon="mdi-remote-desktop"
+                        :disabled="expectedConstantTextFieldInputIsDisabled"
+                        label="RPC Port"
+                      ></v-text-field>
+                    </v-col>
+                    <v-col>
+                      <v-text-field
+                        v-model="expectedVersion"
+                        prepend-icon="mdi-alpha-v-box"
+                        :disabled="expectedConstantTextFieldInputIsDisabled"
+                        label="version"
+                      ></v-text-field>
+                    </v-col>
+                  </v-row>
+                  <v-row>
+                    <v-col>
+                      <v-text-field
+                        v-model="expectedKMDversion"
+                        prepend-icon="mdi-alpha-k-box"
+                        :disabled="expectedConstantTextFieldInputIsDisabled"
+                        label="KMDversion"
+                      ></v-text-field>
+                    </v-col>
+                    <v-col>
+                      <v-text-field
+                        v-model="expectedProtocolVersion"
+                        prepend-icon="mdi-alpha-p-box"
+                        :disabled="expectedConstantTextFieldInputIsDisabled"
+                        label="protocolversion"
+                      ></v-text-field>
+                    </v-col>
+                  </v-row>
+                </v-container>
+              </v-card>
             </v-col>
           </v-row>
         </v-container>
