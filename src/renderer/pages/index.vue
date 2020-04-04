@@ -1,7 +1,38 @@
 <template>
   <v-row justify="center">
     <v-col cols="auto">
-      <v-card width="450" height="250" raised>
+      <v-card width="1400" min-height="100" raised>
+        <v-toolbar>
+          <v-toolbar-title>Control</v-toolbar-title><v-spacer />
+        </v-toolbar>
+        <v-container fluid>
+          <v-card-actions>
+            <v-spacer />
+            <v-btn
+              x-large
+              color="error"
+              :loading="calcFileHashIsRunning"
+              @click="launchSmartChain"
+            >
+              <v-icon>mdi-stop-circle-outline</v-icon>
+              <span>&nbsp;Stop</span>
+            </v-btn>
+            <v-btn
+              color="success"
+              x-large
+              :loading="calcFileHashIsRunning"
+              @click="launchSmartChain"
+            >
+              <v-icon>mdi-rocket-outline</v-icon>
+              <span>&nbsp;Launch</span>
+            </v-btn>
+            <v-spacer />
+          </v-card-actions>
+        </v-container>
+      </v-card>
+    </v-col>
+    <v-col cols="auto">
+      <v-card width="450" min-height="650" raised>
         <v-toolbar>
           <v-toolbar-title>Select the Komodo Daemon</v-toolbar-title
           ><v-spacer />
@@ -28,26 +59,30 @@
             }}</span>
           </v-tooltip>
         </v-toolbar>
-        <br />
-        <v-file-input
-          v-model="chosenFile"
-          label="Click here to select the Komodo Daemon"
-          outlined
-          :disabled="komododSelected"
-          :error-messages="error"
-          @click="clearError"
-          @click:clear="clearError"
-        />
-        <blockquote v-if="fileIsValid">
-          The path of the selected Komodo Daemon is
-          <b>{{ chosenFile.path }}</b>
-        </blockquote>
-      </v-card>
-    </v-col>
-    <v-col cols="auto">
-      <v-card width="450" height="350" raised>
+
+        <v-container fluid>
+          <v-file-input
+            v-model="chosenFile"
+            label="Click here to select the Komodo Daemon"
+            outlined
+            prepend-icon="mdi-server-network"
+            :disabled="komododSelected"
+            :error-messages="error"
+            @click="clearError"
+            @click:clear="clearError"
+          />
+          <v-card min-height="150">
+            <v-card-text>
+              <blockquote v-if="fileIsValid">
+                The path of the selected Komodo Daemon is
+                <b>{{ chosenFile.path }}</b>
+              </blockquote>
+            </v-card-text>
+          </v-card>
+        </v-container>
         <v-toolbar>
-          <v-toolbar-title>Verify Authenticity</v-toolbar-title><v-spacer />
+          <v-toolbar-title>Verify Authenticity (Optional)</v-toolbar-title
+          ><v-spacer />
           <v-tooltip top>
             <template v-slot:activator="{ on }">
               <v-checkbox
@@ -65,37 +100,321 @@
             }}</span>
           </v-tooltip>
         </v-toolbar>
-        <br />
-        <v-text-field
-          v-model="expectedShaSum"
-          :disabled="expectedShaSumIsDisabled"
-          label="Expected SHASUM"
-        ></v-text-field>
-        <v-text-field
-          v-model="signerPubkey"
-          :disabled="true"
-          label="Signer's Pubkey"
-        ></v-text-field>
-        <v-text-field
-          v-model="expectedSignature"
-          :disabled="true"
-          label="Expected Signature"
-        ></v-text-field>
-        <v-card-actions>
-          <blockquote v-if="displayShaSumResult">
-            The SHA256 checksum
-            {{ shaSumMatches ? "matches" : "doesn't match" }}
-          </blockquote>
-          <v-spacer />
-          <v-btn
-            :disabled="verifyButtonDisabled"
-            color="indigo"
-            @click="verifyShaSum"
+
+        <v-container fluid>
+          <v-text-field
+            v-model="expectedShaSum"
+            prepend-icon="mdi-fingerprint"
+            :disabled="expectedShaSumIsDisabled"
+            label="Expected SHASUM"
+          ></v-text-field>
+          <v-text-field
+            v-model="signerPubkey"
+            prepend-icon="mdi-card-account-details"
+            :disabled="true"
+            label="Signer's Pubkey (TBD)"
+          ></v-text-field>
+          <v-text-field
+            v-model="expectedSignature"
+            prepend-icon="mdi-draw"
+            :disabled="true"
+            label="Expected Signature (TBD)"
+          ></v-text-field>
+
+          <v-card-actions>
+            <blockquote v-if="displayShaSumResult">
+              The SHA256 checksum
+              {{ shaSumMatches ? "matches" : "doesn't match" }}
+            </blockquote>
+            <v-spacer />
+            <v-btn
+              :disabled="verifyButtonDisabled"
+              color="indigo"
+              :loading="calcFileHashIsRunning"
+              @click="verifyShaSum"
+            >
+              <v-icon>mdi-shield-check</v-icon>
+              <span>&nbsp;Verify</span>
+            </v-btn>
+          </v-card-actions>
+        </v-container>
+      </v-card>
+    </v-col>
+
+    <v-col cols="auto">
+      <v-card width="450" min-height="650" raised>
+        <v-toolbar>
+          <v-toolbar-title>Input Launch Parameters</v-toolbar-title><v-spacer />
+          <v-tooltip top>
+            <template v-slot:activator="{ on }">
+              <v-switch
+                v-model="launchParamsLocked"
+                :disabled="!komododSelected"
+                inset
+                hide-details
+                v-on="on"
+                ><template v-slot:prepend>
+                  <v-icon v-if="launchParamsLocked" color="success"
+                    >mdi-lock-check
+                  </v-icon>
+                  <v-icon v-else color="error">mdi-lock-open-variant </v-icon>
+                </template>
+              </v-switch>
+            </template>
+            <span>{{
+              launchParamsLocked
+                ? "Click the switch to modify the Launch Parameters"
+                : "Click the switch to CONFIRM your input"
+            }}</span>
+          </v-tooltip>
+        </v-toolbar>
+        <v-container fluid>
+          <v-textarea
+            v-model="launchParametersInput"
+            auto-grow
+            clearable
+            outlined
+            label="Launch Parameters"
+            :disabled="launchParamsInputDisabled"
           >
-            <v-icon>mdi-shield-check</v-icon>
-            <span>&nbsp;Verify</span>
-          </v-btn>
-        </v-card-actions>
+          </v-textarea>
+          <v-card-text>
+            <blockquote>
+              Example:
+              <b
+                >./komodod -ac_name=TEST -ac_supply=9001 -ac_reward=1 -ac_cc=3
+                -addnode=75.210.12.85
+              </b>
+            </blockquote>
+          </v-card-text>
+        </v-container>
+        <v-toolbar>
+          <v-toolbar-title>Expected constants (Optional)</v-toolbar-title
+          ><v-spacer />
+          <v-tooltip top>
+            <template v-slot:activator="{ on }">
+              <v-checkbox
+                v-model="expectedConstantsEnabled"
+                hide-details
+                :disabled="!launchParamsLocked"
+                v-on="on"
+              >
+              </v-checkbox>
+            </template>
+            <span>{{
+              expectedConstantsEnabled ? "Click to  Disable" : "Click to Enable"
+            }}</span>
+          </v-tooltip>
+        </v-toolbar>
+        <v-container fluid>
+          <v-row>
+            <v-col>
+              <v-text-field
+                v-model="expectedMagicNumber"
+                prepend-icon="mdi-check"
+                :disabled="expectedMagicNumberIsDisabled"
+                label="Magic Number"
+              ></v-text-field>
+            </v-col>
+            <v-col>
+              <v-text-field
+                v-model="expectedP2Pport"
+                prepend-icon="mdi-lan-connect"
+                :disabled="true"
+                label="P2P Port"
+              ></v-text-field>
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-col>
+              <v-text-field
+                v-model="expectedRPCport"
+                prepend-icon="mdi-remote-desktop"
+                :disabled="true"
+                label="RPC Port"
+              ></v-text-field>
+            </v-col>
+            <v-col>
+              <v-text-field
+                v-model="dummy"
+                prepend-icon="mdi-remote-desktop"
+                :disabled="true"
+                label="version"
+              ></v-text-field>
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-col>
+              <v-text-field
+                v-model="dummy"
+                prepend-icon="mdi-remote-desktop"
+                :disabled="true"
+                label="KMDversion"
+              ></v-text-field>
+            </v-col>
+            <v-col>
+              <v-text-field
+                v-model="dummy"
+                prepend-icon="mdi-remote-desktop"
+                :disabled="true"
+                label="nLocalServices"
+              ></v-text-field>
+            </v-col>
+          </v-row>
+          <v-card-actions>
+            <blockquote v-if="displayLaunchResult">
+              The Smart Chain was successfully launched
+              {{ "?" }}
+            </blockquote>
+            <v-spacer />
+            <v-tooltip top>
+              <template v-slot:activator="{ on }">
+                <v-switch
+                  v-model="expectedConstantsLocked"
+                  :disabled="expectedConstantsSwitchIsDisabled"
+                  inset
+                  hide-details
+                  v-on="on"
+                  ><template v-slot:prepend>
+                    <v-icon v-if="expectedConstantsLocked" color="success"
+                      >mdi-lock-check
+                    </v-icon>
+                    <v-icon v-else color="error">mdi-lock-open-variant </v-icon>
+                  </template>
+                </v-switch>
+              </template>
+              <span>{{
+                expectedConstantsLocked
+                  ? "Click the switch to modify the Expected Constants"
+                  : "Click the switch to CONFIRM your input"
+              }}</span>
+            </v-tooltip>
+          </v-card-actions>
+        </v-container>
+      </v-card>
+    </v-col>
+
+    <v-col cols="auto">
+      <v-card width="450" min-height="650" raised>
+        <v-toolbar>
+          <v-toolbar-title>Key Pair</v-toolbar-title><v-spacer />
+          <v-tooltip top>
+            <template v-slot:activator="{ on }">
+              <v-switch
+                v-model="launchParamsLocked"
+                :disabled="!komododSelected"
+                inset
+                hide-details
+                v-on="on"
+                ><template v-slot:prepend>
+                  <v-icon v-if="launchParamsLocked" color="success"
+                    >mdi-lock-check
+                  </v-icon>
+                  <v-icon v-else color="error">mdi-lock-open-variant </v-icon>
+                </template>
+              </v-switch>
+            </template>
+            <span>{{
+              launchParamsLocked
+                ? "Click the switch to modify the Launch Parameters"
+                : "Click the switch to CONFIRM your input"
+            }}</span>
+          </v-tooltip>
+        </v-toolbar>
+        <v-container fluid>
+          <v-text-field
+            v-model="expectedMagicNumber"
+            prepend-icon="mdi-account-outline"
+            :disabled="expectedMagicNumberIsDisabled"
+            label="Pubkey/Address"
+          ></v-text-field>
+          <v-textarea
+            v-model="expectedP2Pport"
+            prepend-icon="mdi-key-outline"
+            :disabled="true"
+            label="WIF/PrivateKey/Seed Words"
+            outlined
+            height="100"
+          ></v-textarea>
+        </v-container>
+        <v-toolbar>
+          <v-toolbar-title>Additional Config (Optional)</v-toolbar-title
+          ><v-spacer />
+          <v-tooltip top>
+            <template v-slot:activator="{ on }">
+              <v-checkbox
+                v-model="expectedConstantsEnabled"
+                hide-details
+                :disabled="!launchParamsLocked"
+                v-on="on"
+              >
+              </v-checkbox>
+            </template>
+            <span>{{
+              expectedConstantsEnabled ? "Click to  Disable" : "Click to Enable"
+            }}</span>
+          </v-tooltip>
+        </v-toolbar>
+        <v-container fluid>
+          <v-text-field
+            v-model="dummy"
+            prepend-icon="mdi-folder"
+            label="Blockchain Data Directory"
+          ></v-text-field>
+          <v-checkbox
+            v-model="dummy"
+            prepend-icon="mdi-swap-vertical"
+            hide-details
+            label="dexp2p"
+          >
+          </v-checkbox>
+          <v-checkbox
+            v-model="dummy"
+            prepend-icon="mdi-wallet-outline"
+            hide-details
+            label="testnode"
+          >
+          </v-checkbox>
+          <v-checkbox
+            v-model="dummy"
+            prepend-icon="mdi-file-cabinet"
+            hide-details
+            label="reindex"
+          >
+          </v-checkbox>
+          <v-checkbox
+            v-model="dummy"
+            prepend-icon="mdi-wallet-outline"
+            hide-details
+            label="rescan"
+          >
+          </v-checkbox>
+          <v-card-actions>
+            <v-spacer />
+            <v-tooltip top>
+              <template v-slot:activator="{ on }">
+                <v-switch
+                  v-model="expectedConstantsLocked"
+                  :disabled="expectedConstantsSwitchIsDisabled"
+                  inset
+                  hide-details
+                  v-on="on"
+                  ><template v-slot:prepend>
+                    <v-icon v-if="expectedConstantsLocked" color="success"
+                      >mdi-lock-check
+                    </v-icon>
+                    <v-icon v-else color="error">mdi-lock-open-variant </v-icon>
+                  </template>
+                </v-switch>
+              </template>
+              <span>{{
+                expectedConstantsLocked
+                  ? "Click the switch to modify the Expected Constants"
+                  : "Click the switch to CONFIRM your input"
+              }}</span>
+            </v-tooltip>
+          </v-card-actions>
+        </v-container>
       </v-card>
     </v-col>
 
@@ -134,6 +453,15 @@ export default {
       shaSumMatches: null,
       calcFileHashIsRunning: false,
       displayShaSumResult: false,
+      launchParametersInput: "",
+      launchParamsLocked: false,
+      expectedConstantsEnabled: false,
+      expectedMagicNumber: "",
+      expectedP2Pport: null,
+      expectedRPCport: null,
+      displayLaunchResult: false,
+      expectedConstantsLocked: false,
+      dummy: "",
     };
   },
   computed: {
@@ -166,14 +494,33 @@ export default {
     komododSwitchIcon() {
       return this.komododSelected ? "mdi-lock-check" : "mdi-lock-open-variant";
     },
-    verifyAuthTextFieldDisabled() {
+    verifyAuthTextFieldsDisabled() {
       return !(this.komododSelected && this.verifyAuthenticityEnabled);
     },
     verifyButtonDisabled() {
-      return this.verifyAuthTextFieldDisabled;
+      return this.verifyAuthTextFieldsDisabled || this.calcFileHashIsRunning;
     },
     expectedShaSumIsDisabled() {
-      return this.verifyAuthTextFieldDisabled || this.calcFileHashIsRunning;
+      return this.verifyAuthTextFieldsDisabled || this.calcFileHashIsRunning;
+    },
+    launchParamsInputDisabled() {
+      return !this.komododSelected || this.launchParamsLocked;
+    },
+    expectedConstantsTextFieldsDisabled() {
+      return !(this.launchParamsLocked && this.expectedConstantsEnabled);
+    },
+    expectedConstantsSwitchIsDisabled() {
+      return this.expectedConstantsTextFieldsDisabled || this.daemonConnected;
+    },
+    expectedMagicNumberIsDisabled() {
+      return (
+        this.expectedConstantsTextFieldsDisabled ||
+        this.daemonConnected ||
+        this.expectedConstantsLocked
+      );
+    },
+    daemonConnected() {
+      return this.$store.state.daemonConnected;
     },
   },
   watch: {
@@ -209,6 +556,24 @@ export default {
     expectedShaSum(val) {
       this.displayShaSumResult = false;
     },
+    launchParametersInput(val) {
+      try {
+        // cleaning it up
+        if (!val) {
+          return;
+        }
+        let array = val.split(" ");
+        array = array.map((str) =>
+          str.length === 1 || str.includes("komodod") || str.includes("-pubkey")
+            ? ""
+            : str
+        );
+        const cleanedLaunchString = array.join(" ");
+        console.log(cleanedLaunchString);
+      } catch (error) {
+        console.log(error);
+      }
+    },
   },
   methods: {
     clearError() {
@@ -221,14 +586,10 @@ export default {
         this.calcFileHashIsRunning = false;
         this.shaSumMatches = hash === this.expectedShaSum;
         this.displayShaSumResult = true;
-        console.log(hash);
-        console.log(
-          `this.shaSumMatches = hash === this.expectedShaSum;: ${
-            hash === this.expectedShaSum
-          }`
-        );
       } catch (error) {
-        console.log(error);
+        this.snackbarError = error;
+        this.snackbar = true;
+        // console.log(error);
       }
     },
     calcFileHash(filename, algorithm = "sha256") {
@@ -249,6 +610,7 @@ export default {
         }
       });
     },
+    launchSmartChain() {},
   },
 };
 </script>

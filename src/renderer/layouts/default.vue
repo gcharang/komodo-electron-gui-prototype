@@ -69,17 +69,17 @@ export default {
       sysBarColor: "success", // #FFEA00 #FF5722
       navDrawerItems: [
         { title: "Settings", icon: "mdi-cog-outline", nuxtLink: "/" },
-        { title: "Publish", icon: "mdi-arrow-up-bold", nuxtLink: "/publisher" },
-        {
-          title: "Download",
-          icon: "mdi-arrow-down-bold",
-          nuxtLink: "/downloader",
-        },
         {
           title: "Dashboard",
           icon: "mdi-view-dashboard",
           nuxtLink: "/dashboard",
         },
+        {
+          title: "Download",
+          icon: "mdi-arrow-down-bold",
+          nuxtLink: "/downloader",
+        },
+        { title: "Publish", icon: "mdi-arrow-up-bold", nuxtLink: "/publisher" },
       ],
       drawer: true,
     };
@@ -93,7 +93,7 @@ export default {
       };
       const notConnected = {
         colour: "#FFEA00",
-        daemonConnText: "Not Connected to the daemon",
+        daemonConnText: "Lost connection to the daemon",
         daemonConnIcon: "mdi-power-plug-off",
       };
       return this.daemonConnected ? connected : notConnected;

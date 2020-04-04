@@ -83,14 +83,14 @@
     </v-col>
     <v-col cols="auto">
       <v-card width="1500" height="400" raised>
-        <v-app-bar>
+        <v-toolbar>
           <v-toolbar-title>Published files</v-toolbar-title>
           <v-spacer></v-spacer>
           <v-btn color="indigo" @click="refresh_publishedfiles_list">
             <v-icon>mdi-refresh</v-icon>
             <span>&nbsp;Refresh</span>
           </v-btn>
-        </v-app-bar>
+        </v-toolbar>
         <v-data-table
           :headers="headers"
           :items="allPublishedFilesDataFromDB"
