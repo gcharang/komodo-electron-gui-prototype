@@ -5,3 +5,5 @@
 - settings page with all the restrictions on chain name, magic, komodod version, komodod hash, signature from publisher etc.,
 - ability to generate key pair on the fly or import preexisting one
 - cleanup datadirectory to start a smartchain with same name again
+- store the "nLocalServices" in state and display in dashboard
+- store all relevant data from the initial startup of the daemon and use it when needed

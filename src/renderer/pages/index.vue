@@ -205,6 +205,29 @@
               expectedConstantsEnabled ? "Click to  Disable" : "Click to Enable"
             }}</span>
           </v-tooltip>
+          <v-spacer />
+          <v-tooltip top>
+            <template v-slot:activator="{ on }">
+              <v-switch
+                v-model="expectedConstantsLocked"
+                :disabled="expectedConstantsSwitchIsDisabled"
+                inset
+                hide-details
+                v-on="on"
+                ><template v-slot:prepend>
+                  <v-icon v-if="expectedConstantsLocked" color="success"
+                    >mdi-lock-check
+                  </v-icon>
+                  <v-icon v-else color="error">mdi-lock-open-variant </v-icon>
+                </template>
+              </v-switch>
+            </template>
+            <span>{{
+              expectedConstantsLocked
+                ? "Click the switch to modify the Expected Constants"
+                : "Click the switch to CONFIRM your input"
+            }}</span>
+          </v-tooltip>
         </v-toolbar>
         <v-container fluid>
           <v-row>
@@ -212,7 +235,7 @@
               <v-text-field
                 v-model="expectedMagicNumber"
                 prepend-icon="mdi-check"
-                :disabled="expectedMagicNumberIsDisabled"
+                :disabled="expectedConstantTextFieldInputIsDisabled"
                 label="Magic Number"
               ></v-text-field>
             </v-col>
@@ -220,7 +243,7 @@
               <v-text-field
                 v-model="expectedP2Pport"
                 prepend-icon="mdi-lan-connect"
-                :disabled="true"
+                :disabled="expectedConstantTextFieldInputIsDisabled"
                 label="P2P Port"
               ></v-text-field>
             </v-col>
@@ -230,15 +253,15 @@
               <v-text-field
                 v-model="expectedRPCport"
                 prepend-icon="mdi-remote-desktop"
-                :disabled="true"
+                :disabled="expectedConstantTextFieldInputIsDisabled"
                 label="RPC Port"
               ></v-text-field>
             </v-col>
             <v-col>
               <v-text-field
-                v-model="dummy"
-                prepend-icon="mdi-remote-desktop"
-                :disabled="true"
+                v-model="expectedVersion"
+                prepend-icon="mdi-alpha-v-box"
+                :disabled="expectedConstantTextFieldInputIsDisabled"
                 label="version"
               ></v-text-field>
             </v-col>
@@ -246,50 +269,21 @@
           <v-row>
             <v-col>
               <v-text-field
-                v-model="dummy"
-                prepend-icon="mdi-remote-desktop"
-                :disabled="true"
+                v-model="expectedKMDversion"
+                prepend-icon="mdi-alpha-k-box"
+                :disabled="expectedConstantTextFieldInputIsDisabled"
                 label="KMDversion"
               ></v-text-field>
             </v-col>
             <v-col>
               <v-text-field
-                v-model="dummy"
-                prepend-icon="mdi-remote-desktop"
-                :disabled="true"
-                label="nLocalServices"
+                v-model="expectedProtocolVersion"
+                prepend-icon="mdi-alpha-p-box"
+                :disabled="expectedConstantTextFieldInputIsDisabled"
+                label="protocolversion"
               ></v-text-field>
             </v-col>
           </v-row>
-          <v-card-actions>
-            <blockquote v-if="displayLaunchResult">
-              The Smart Chain was successfully launched
-              {{ "?" }}
-            </blockquote>
-            <v-spacer />
-            <v-tooltip top>
-              <template v-slot:activator="{ on }">
-                <v-switch
-                  v-model="expectedConstantsLocked"
-                  :disabled="expectedConstantsSwitchIsDisabled"
-                  inset
-                  hide-details
-                  v-on="on"
-                  ><template v-slot:prepend>
-                    <v-icon v-if="expectedConstantsLocked" color="success"
-                      >mdi-lock-check
-                    </v-icon>
-                    <v-icon v-else color="error">mdi-lock-open-variant </v-icon>
-                  </template>
-                </v-switch>
-              </template>
-              <span>{{
-                expectedConstantsLocked
-                  ? "Click the switch to modify the Expected Constants"
-                  : "Click the switch to CONFIRM your input"
-              }}</span>
-            </v-tooltip>
-          </v-card-actions>
         </v-container>
       </v-card>
     </v-col>
@@ -301,13 +295,13 @@
           <v-tooltip top>
             <template v-slot:activator="{ on }">
               <v-switch
-                v-model="launchParamsLocked"
-                :disabled="!komododSelected"
+                v-model="keypairLocked"
+                :disabled="!launchParamsLocked"
                 inset
                 hide-details
                 v-on="on"
                 ><template v-slot:prepend>
-                  <v-icon v-if="launchParamsLocked" color="success"
+                  <v-icon v-if="keypairLocked" color="success"
                     >mdi-lock-check
                   </v-icon>
                   <v-icon v-else color="error">mdi-lock-open-variant </v-icon>
@@ -315,7 +309,7 @@
               </v-switch>
             </template>
             <span>{{
-              launchParamsLocked
+              keypairLocked
                 ? "Click the switch to modify the Launch Parameters"
                 : "Click the switch to CONFIRM your input"
             }}</span>
@@ -323,18 +317,22 @@
         </v-toolbar>
         <v-container fluid>
           <v-text-field
-            v-model="expectedMagicNumber"
+            v-model="dummy"
             prepend-icon="mdi-account-outline"
-            :disabled="expectedMagicNumberIsDisabled"
+            :disabled="true"
             label="Pubkey/Address"
           ></v-text-field>
           <v-textarea
-            v-model="expectedP2Pport"
+            v-model="wifPrivKeySeed"
+            :append-icon="showWif ? 'mdi-eye' : 'mdi-eye-off'"
+            :type="showWif ? 'text' : 'password'"
             prepend-icon="mdi-key-outline"
-            :disabled="true"
+            :disabled="false"
             label="WIF/PrivateKey/Seed Words"
+            clearable
             outlined
-            height="100"
+            no-resize
+            @click:append="showWif = !showWif"
           ></v-textarea>
         </v-container>
         <v-toolbar>
@@ -354,66 +352,80 @@
               expectedConstantsEnabled ? "Click to  Disable" : "Click to Enable"
             }}</span>
           </v-tooltip>
+          <v-spacer />
+          <v-tooltip top>
+            <template v-slot:activator="{ on }">
+              <v-switch
+                v-model="expectedConstantsLocked"
+                :disabled="expectedConstantsSwitchIsDisabled"
+                inset
+                hide-details
+                v-on="on"
+                ><template v-slot:prepend>
+                  <v-icon v-if="expectedConstantsLocked" color="success"
+                    >mdi-lock-check
+                  </v-icon>
+                  <v-icon v-else color="error">mdi-lock-open-variant </v-icon>
+                </template>
+              </v-switch>
+            </template>
+            <span>{{
+              expectedConstantsLocked
+                ? "Click the switch to modify the Expected Constants"
+                : "Click the switch to CONFIRM your input"
+            }}</span>
+          </v-tooltip>
         </v-toolbar>
         <v-container fluid>
-          <v-text-field
+          <v-textarea
             v-model="dummy"
             prepend-icon="mdi-folder"
             label="Blockchain Data Directory"
-          ></v-text-field>
-          <v-checkbox
-            v-model="dummy"
-            prepend-icon="mdi-swap-vertical"
-            hide-details
-            label="dexp2p"
-          >
-          </v-checkbox>
-          <v-checkbox
-            v-model="dummy"
-            prepend-icon="mdi-wallet-outline"
-            hide-details
-            label="testnode"
-          >
-          </v-checkbox>
-          <v-checkbox
-            v-model="dummy"
-            prepend-icon="mdi-file-cabinet"
-            hide-details
-            label="reindex"
-          >
-          </v-checkbox>
-          <v-checkbox
-            v-model="dummy"
-            prepend-icon="mdi-wallet-outline"
-            hide-details
-            label="rescan"
-          >
-          </v-checkbox>
-          <v-card-actions>
-            <v-spacer />
-            <v-tooltip top>
-              <template v-slot:activator="{ on }">
-                <v-switch
-                  v-model="expectedConstantsLocked"
-                  :disabled="expectedConstantsSwitchIsDisabled"
-                  inset
-                  hide-details
-                  v-on="on"
-                  ><template v-slot:prepend>
-                    <v-icon v-if="expectedConstantsLocked" color="success"
-                      >mdi-lock-check
-                    </v-icon>
-                    <v-icon v-else color="error">mdi-lock-open-variant </v-icon>
-                  </template>
-                </v-switch>
-              </template>
-              <span>{{
-                expectedConstantsLocked
-                  ? "Click the switch to modify the Expected Constants"
-                  : "Click the switch to CONFIRM your input"
-              }}</span>
-            </v-tooltip>
-          </v-card-actions>
+            :disabled="true"
+            row-height="20"
+            outlined
+            auto-grow
+          ></v-textarea>
+          <v-row>
+            <v-col>
+              <v-checkbox
+                v-model="dummy"
+                prepend-icon="mdi-swap-vertical"
+                hide-details
+                label="dexp2p"
+              >
+              </v-checkbox>
+            </v-col>
+            <v-col>
+              <v-checkbox
+                v-model="dummy"
+                prepend-icon="mdi-wallet-outline"
+                hide-details
+                label="testnode"
+              >
+              </v-checkbox>
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-col>
+              <v-checkbox
+                v-model="dummy"
+                prepend-icon="mdi-file-cabinet"
+                hide-details
+                label="reindex"
+              >
+              </v-checkbox>
+            </v-col>
+            <v-col>
+              <v-checkbox
+                v-model="dummy"
+                prepend-icon="mdi-wallet-outline"
+                hide-details
+                label="rescan"
+              >
+              </v-checkbox>
+            </v-col>
+          </v-row>
         </v-container>
       </v-card>
     </v-col>
@@ -454,13 +466,19 @@ export default {
       calcFileHashIsRunning: false,
       displayShaSumResult: false,
       launchParametersInput: "",
+      cleanedLaunchString: "",
       launchParamsLocked: false,
       expectedConstantsEnabled: false,
       expectedMagicNumber: "",
       expectedP2Pport: null,
       expectedRPCport: null,
+      expectedVersion: null,
+      expectedKMDversion: null,
+      expectedProtocolVersion: null,
+      keypairLocked: false,
       displayLaunchResult: false,
       expectedConstantsLocked: false,
+      showWif: false,
       dummy: "",
     };
   },
@@ -512,7 +530,7 @@ export default {
     expectedConstantsSwitchIsDisabled() {
       return this.expectedConstantsTextFieldsDisabled || this.daemonConnected;
     },
-    expectedMagicNumberIsDisabled() {
+    expectedConstantTextFieldInputIsDisabled() {
       return (
         this.expectedConstantsTextFieldsDisabled ||
         this.daemonConnected ||
@@ -562,16 +580,19 @@ export default {
         if (!val) {
           return;
         }
+        val = val.includes("-dexp2p=2") ? val : val + "-dexp2p=2";
         let array = val.split(" ");
         array = array.map((str) =>
           str.length === 1 || str.includes("komodod") || str.includes("-pubkey")
             ? ""
             : str
         );
-        const cleanedLaunchString = array.join(" ");
-        console.log(cleanedLaunchString);
+
+        this.cleanedLaunchString = array.join(" ");
       } catch (error) {
-        console.log(error);
+        this.snackbarError = error;
+        this.snackbar = true;
+        // console.log(error);
       }
     },
   },
