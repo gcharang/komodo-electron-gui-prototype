@@ -2,7 +2,7 @@
   <v-row justify="center" dense>
     <v-row justify="center" dense>
       <v-col cols="auto">
-        <v-card min-width="1300" min-height="100" raised>
+        <v-card width="1360" min-height="100" raised>
           <v-toolbar dense>
             <v-toolbar-title>Control</v-toolbar-title><v-spacer />
             <v-tooltip top>
@@ -75,7 +75,7 @@
 
     <v-row justify="center" dense>
       <v-col cols="auto">
-        <v-card width="450" height="600" raised>
+        <v-card width="450" height="606" raised>
           <v-toolbar dense>
             <v-toolbar-title>Select the Komodo Daemon</v-toolbar-title
             ><v-spacer />
