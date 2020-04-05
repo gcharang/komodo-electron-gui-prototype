@@ -7,3 +7,4 @@
 - cleanup datadirectory to start a smartchain with same name again
 - store the "nLocalServices" in state and display in dashboard
 - store all relevant data from the initial startup of the daemon and use it when needed
+- in the index.vue file, refactor variables into objects. an object for each card should be ok

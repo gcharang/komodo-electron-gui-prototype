@@ -124,8 +124,7 @@
             </v-card>
           </v-container>
           <v-toolbar dense>
-            <v-toolbar-title>Verify Authenticity (Optional)</v-toolbar-title
-            ><v-spacer />
+            <v-toolbar-title>Verify Authenticity </v-toolbar-title><v-spacer />
             <v-tooltip top>
               <template v-slot:activator="{ on }">
                 <v-checkbox
