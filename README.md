@@ -1,6 +1,6 @@
-# dexp2p-stream
+# dexp2p-fileshare
 
-> Stream and download streams using DEXP2P network of a Smart Chain
+> Publish and download files using the DEXP2P network of a Smart Chain
 
 #### Build Setup
 
