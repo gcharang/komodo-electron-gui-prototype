@@ -52,7 +52,7 @@
                 color="error"
                 :disabled="stopButtonIsDisabled"
                 :loading="calcFileHashIsRunning"
-                @click="launchSmartChain"
+                @click="stopSmartChain"
               >
                 <v-icon>mdi-stop-circle-outline</v-icon>
                 <span>&nbsp;Stop</span>
@@ -694,6 +694,7 @@ export default {
       });
     },
     launchSmartChain() {},
+    stopSmartChain() {},
   },
 };
 </script>
